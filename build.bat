@@ -1,7 +1,7 @@
 echo off
 echo "Compiling ..."
 
-gcc -o ./bin/asciidungeon.exe ./src/main.c ./src/utils.c ./src/workspace.c ./src/menu.c ./src/ui.c ./src/aabb.c ./src/input.c -I"./../asciigl/include" -L"./libs" -lasciigl-static
+gcc -o ./bin/asciidungeon.exe ./src/main.c ./src/utils.c ./src/workspace.c ./src/menu.c ./src/ui.c ./src/input.c -I"./../asciigl/include" -L"./libs" -lasciigl-static
 
 if not exist bin (
 	mkdir bin

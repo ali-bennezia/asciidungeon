@@ -3,11 +3,6 @@
 
 #include <asciigl.h>
 
-static void create_btn( IntVec2 pos, char *txt, void(*on_click_func)() )
-{
-
-}
-
 void asciidng_load_menu()
 {
 	IntVec2 pos = { 10, 10 };

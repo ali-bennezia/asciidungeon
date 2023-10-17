@@ -4,11 +4,12 @@
 #include <asciigl.h>
 
 #include "workspace.h"
+#include "ui.h"
 #include "menu.h"
 
-static void cleanup()
+static void terminate()
 {
-	asciidng_cleanup_workspace();
+	asciidng_terminate_workspace();
 }
 
 static void init()
@@ -16,7 +17,7 @@ static void init()
 	asciigl_init();
 	asciidng_init_workspace();
 
-	atexit( cleanup );
+	atexit( terminate );
 
 	asciidng_load_menu();
 }
