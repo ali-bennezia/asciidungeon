@@ -5,7 +5,7 @@
 #include "ui.h"
 
 static DynamicArray tiles, props, entities;
-static DynamicArray buttons, images; 
+static DynamicArray buttons, images, frames, texts; 
 
 void asciidng_init_workspace()
 {
@@ -13,12 +13,16 @@ void asciidng_init_workspace()
 	props = gen_dynamic_array( sizeof( Model* ) );
 	entities = gen_dynamic_array( sizeof( Model* ) );
 
-	buttons = gen_dynamic_array( sizeof( Button* ) );
+	buttons = gen_dynamic_array( sizeof( UIButton* ) );
 	images = gen_dynamic_array( sizeof( UIImage* ) ); 
+	frames = gen_dynamic_array( sizeof( UIFrame* ) );
+	texts = gen_dynamic_array( sizeof( UIText* ) );
 }
 
 void asciidng_terminate_workspace()
 {
+	free_dynamic_array( &texts );
+	free_dynamic_array( &frames );
 	free_dynamic_array( &images );
 	free_dynamic_array( &buttons );
 

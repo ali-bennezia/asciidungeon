@@ -4,10 +4,10 @@
 typedef struct UIText UIText;
 typedef struct UIFrame UIFrame;
 
-typedef struct Button {
+typedef struct UIButton {
 	UIText *ui_txt;
 	UIFrame *ui_frame;
-} Button;
+} UIButton;
 
 
 #endif
