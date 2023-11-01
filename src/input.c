@@ -111,16 +111,33 @@ int asciidng_register_input( char *identifier, uint16_t key )
 	insert_data( &g_registered_inputs, &inp, sizeof( RegisteredInput ) );	
 }
 
+static int asciidng_set_input_state( char *identifier, uint8_t state )
+{
+	for ( size_t i = 0; i < g_registered_inputs.usage; ++i )
+	{
+		RegisteredInput *input = ( RegisteredInput* ) g_registered_inputs.buffer + i; 
+		if ( strcmp( identifier, input->identifier ) == 0 ){
+			input->state = state;
+			return 1;
+		}
+	}
+	return 0;	
+}
+
 #include <stdio.h>
 
 #ifdef WINMODE
 static void win_handle_key_event( WORD keyCode, BOOL keyDown )
-#elif defined LINMODE
-static void uni_handle_key_event()
-#endif
 {
 	printf( "Key event!\n" );
 }
+#elif defined LINMODE
+static void uni_handle_key_event()
+{
+
+}
+#endif
+
 
 void asciidng_terminate_input()
 {
