@@ -35,6 +35,7 @@ static void init()
 
 static void loop()
 {
+
 	while (1){
 		asciidng_poll_input();
 		asciigl_process_frame();
