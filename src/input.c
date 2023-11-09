@@ -25,16 +25,11 @@ typedef struct RegisteredInput {
 
 static DynamicArray g_registered_inputs;
 
-typedef struct RegisteredKey {
-	char *identifier;
-} RegisteredKey;
 
-static DynamicArray g_registered_keys;
 
 void asciidng_init_input()
 {
-	g_registered_keys = gen_dynamic_array( sizeof( RegisteredKey ) );
-	asciidng_register_keys();
+	asciidng_init_keys();
 	g_registered_inputs = gen_dynamic_array( sizeof( RegisteredInput ) );
 
 	#ifdef WINMODE
@@ -48,41 +43,6 @@ void asciidng_init_input()
 	#elif defined LINMODE
 
 	#endif
-}
-
-int asciidng_is_key_registered( char *identifier )
-{
-	for ( size_t i = 0; i < g_registered_keys.usage; ++i )
-	{
-		if ( strcmp( identifier, ( ( RegisteredKey* ) g_registered_keys.buffer + i )->identifier ) == 0 ){
-			return 1;
-		}
-	}
-	return 0;	
-}
-
-uint16_t asciidng_get_key_code( char *identifier )
-{
-	for ( size_t i = 0; i < g_registered_keys.usage; ++i )
-	{
-		if ( strcmp( identifier, ( ( RegisteredKey* ) g_registered_keys.buffer + i )->identifier ) == 0 ){
-			return i;
-		}
-	}
-	return 0;	
-}
-
-int asciidng_register_key( char *identifier )
-{
-	if ( !identifier || asciidng_is_key_registered( identifier ) ) return 1;
-	size_t identifier_len = strlen( identifier ) + 1;
-	char *identifier_cpy = malloc( identifier_len );
-	if ( !identifier_cpy ) return 1;
-	strcpy( identifier_cpy, identifier ); 
-	RegisteredKey inp = {
-		identifier_cpy,
-	};
-	insert_data( &g_registered_keys, &inp, sizeof( RegisteredKey ) );	
 }
 
 int asciidng_is_input_registered( char *identifier )
@@ -142,7 +102,7 @@ static void uni_handle_key_event()
 void asciidng_terminate_input()
 {
 	free_dynamic_array( &g_registered_inputs );
-	free_dynamic_array( &g_registered_keys );
+	asciidng_terminate_keys();
 }
 
 void asciidng_poll_input()
