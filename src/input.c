@@ -87,7 +87,7 @@ static int asciidng_set_input_state( char *identifier, uint8_t state )
 #include <stdio.h>
 
 #ifdef WINMODE
-static void win_handle_key_event( WORD keyCode, BOOL keyDown )
+static void win_handle_key_event( WORD key_code, BOOL key_down )
 {
 	printf( "Key event!\n" );
 }

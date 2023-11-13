@@ -1,233 +1,193 @@
 #include "keys.h"
-#include "input.h"
 
-#include <asciigl.h>
+#include <stdlib.h>
+#include <stdio.h>
 
-typedef struct RegisteredKey {
-	char *identifier;
-} RegisteredKey;
+enum ASCIIDNG_KEY
+{
+	ASCIIDNG_KEY_0,
+	ASCIIDNG_KEY_1,
+	ASCIIDNG_KEY_2,
+	ASCIIDNG_KEY_3,
+	ASCIIDNG_KEY_4,
+	ASCIIDNG_KEY_5,
+	ASCIIDNG_KEY_6,
+	ASCIIDNG_KEY_7,
+	ASCIIDNG_KEY_8,
+	ASCIIDNG_KEY_9,
+	ASCIIDNG_KEY_A,
+	ASCIIDNG_KEY_B,
+	ASCIIDNG_KEY_C,
+	ASCIIDNG_KEY_D,
+	ASCIIDNG_KEY_E,
+	ASCIIDNG_KEY_F,
+	ASCIIDNG_KEY_G,
+	ASCIIDNG_KEY_H,
+	ASCIIDNG_KEY_I,
+	ASCIIDNG_KEY_J,
+	ASCIIDNG_KEY_K,
+	ASCIIDNG_KEY_L,
+	ASCIIDNG_KEY_M,
+	ASCIIDNG_KEY_N,
+	ASCIIDNG_KEY_O,
+	ASCIIDNG_KEY_P,
+	ASCIIDNG_KEY_Q,
+	ASCIIDNG_KEY_R,
+	ASCIIDNG_KEY_S,
+	ASCIIDNG_KEY_T,
+	ASCIIDNG_KEY_U,
+	ASCIIDNG_KEY_V,
+	ASCIIDNG_KEY_W,
+	ASCIIDNG_KEY_X,
+	ASCIIDNG_KEY_Y,
+	ASCIIDNG_KEY_Z,
+	ASCIIDNG_KEY_LBUTTON,
+	ASCIIDNG_KEY_RBUTTON,
+	ASCIIDNG_KEY_CANCEL,
+	ASCIIDNG_KEY_MBUTTON,
+	ASCIIDNG_KEY_XBUTTON1,
+	ASCIIDNG_KEY_XBUTTON2,
+	ASCIIDNG_KEY_BACK,
+	ASCIIDNG_KEY_TAB,
+	ASCIIDNG_KEY_CLEAR,
+	ASCIIDNG_KEY_RETURN,
+	ASCIIDNG_KEY_SHIFT,
+	ASCIIDNG_KEY_CONTROL,
+	ASCIIDNG_KEY_MENU,
+	ASCIIDNG_KEY_PAUSE,
+	ASCIIDNG_KEY_CAPITAL,
+	ASCIIDNG_KEY_KANA,
+	ASCIIDNG_KEY_HANGUL,
+	ASCIIDNG_KEY_IME_ON,
+	ASCIIDNG_KEY_JUNJA,
+	ASCIIDNG_KEY_FINAL,
+	ASCIIDNG_KEY_HANJA,
+	ASCIIDNG_KEY_KANJI,
+	ASCIIDNG_KEY_IME_OFF,
+	ASCIIDNG_KEY_ESCAPE,
+	ASCIIDNG_KEY_CONVERT,
+	ASCIIDNG_KEY_NONCONVERT,
+	ASCIIDNG_KEY_ACCEPT,
+	ASCIIDNG_KEY_MODECHANGE,
+	ASCIIDNG_KEY_SPACE,
+	ASCIIDNG_KEY_PRIOR,
+	ASCIIDNG_KEY_NEXT,
+	ASCIIDNG_KEY_END,
+	ASCIIDNG_KEY_HOME,
+	ASCIIDNG_KEY_LEFT,
+	ASCIIDNG_KEY_UP,
+	ASCIIDNG_KEY_RIGHT,
+	ASCIIDNG_KEY_DOWN,
+	ASCIIDNG_KEY_SELECT,
+	ASCIIDNG_KEY_PRINT,
+	ASCIIDNG_KEY_EXECUTE,
+	ASCIIDNG_KEY_SNAPSHOT,
+	ASCIIDNG_KEY_INSERT,
+	ASCIIDNG_KEY_DELETE,
+	ASCIIDNG_KEY_HELP,
+	ASCIIDNG_KEY_LWIN,
+	ASCIIDNG_KEY_RWIN,
+	ASCIIDNG_KEY_APPS,
+	ASCIIDNG_KEY_SLEEP,
+	ASCIIDNG_KEY_NUMPAD0,
+	ASCIIDNG_KEY_NUMPAD1,
+	ASCIIDNG_KEY_NUMPAD2,
+	ASCIIDNG_KEY_NUMPAD3,
+	ASCIIDNG_KEY_NUMPAD4,
+	ASCIIDNG_KEY_NUMPAD5,
+	ASCIIDNG_KEY_NUMPAD6,
+	ASCIIDNG_KEY_NUMPAD7,
+	ASCIIDNG_KEY_NUMPAD8,
+	ASCIIDNG_KEY_NUMPAD9,
+	ASCIIDNG_KEY_MULTIPLY,
+	ASCIIDNG_KEY_ADD,
+	ASCIIDNG_KEY_SEPARATOR,
+	ASCIIDNG_KEY_SUBTRACT,
+	ASCIIDNG_KEY_DECIMAL,
+	ASCIIDNG_KEY_DIVIDE,
+	ASCIIDNG_KEY_F1,
+	ASCIIDNG_KEY_F2,
+	ASCIIDNG_KEY_F3,
+	ASCIIDNG_KEY_F4,
+	ASCIIDNG_KEY_F5,
+	ASCIIDNG_KEY_F6,
+	ASCIIDNG_KEY_F7,
+	ASCIIDNG_KEY_F8,
+	ASCIIDNG_KEY_F9,
+	ASCIIDNG_KEY_F10,
+	ASCIIDNG_KEY_F11,
+	ASCIIDNG_KEY_F12,
+	ASCIIDNG_KEY_F13,
+	ASCIIDNG_KEY_F14,
+	ASCIIDNG_KEY_F15,
+	ASCIIDNG_KEY_F16,
+	ASCIIDNG_KEY_F17,
+	ASCIIDNG_KEY_F18,
+	ASCIIDNG_KEY_F19,
+	ASCIIDNG_KEY_F20,
+	ASCIIDNG_KEY_F21,
+	ASCIIDNG_KEY_F22,
+	ASCIIDNG_KEY_F23,
+	ASCIIDNG_KEY_F24,
+	ASCIIDNG_KEY_NUMLOCK,
+	ASCIIDNG_KEY_SCROLL,
+	ASCIIDNG_KEY_LSHIFT,
+	ASCIIDNG_KEY_RSHIFT,
+	ASCIIDNG_KEY_LCONTROL,
+	ASCIIDNG_KEY_RCONTROL,
+	ASCIIDNG_KEY_LMENU,
+	ASCIIDNG_KEY_RMENU,
+	ASCIIDNG_KEY_BROWSER_BACK,
+	ASCIIDNG_KEY_BROWSER_FORWARD,
+	ASCIIDNG_KEY_BROWSER_REFRESH,
+	ASCIIDNG_KEY_BROWSER_STOP,
+	ASCIIDNG_KEY_BROWSER_SEARCH,
+	ASCIIDNG_KEY_BROWSER_FAVORITES,
+	ASCIIDNG_KEY_BROWSER_HOME,
+	ASCIIDNG_KEY_VOLUME_MUTE,
+	ASCIIDNG_KEY_VOLUME_DOWN,
+	ASCIIDNG_KEY_VOLUME_UP,
+	ASCIIDNG_KEY_MEDIA_NEXT_TRACK,
+	ASCIIDNG_KEY_MEDIA_PREV_TRACK,
+	ASCIIDNG_KEY_MEDIA_STOP,
+	ASCIIDNG_KEY_MEDIA_PLAY_PAUSE,
+	ASCIIDNG_KEY_LAUNCH_MAIL,
+	ASCIIDNG_KEY_LAUNCH_MEDIA_SELECT,
+	ASCIIDNG_KEY_LAUNCH_APP1,
+	ASCIIDNG_KEY_LAUNCH_APP2,
+	ASCIIDNG_KEY_OEM_1,
+	ASCIIDNG_KEY_OEM_PLUS,
+	ASCIIDNG_KEY_OEM_COMMA,
+	ASCIIDNG_KEY_OEM_MINUS,
+	ASCIIDNG_KEY_OEM_PERIOD,
+	ASCIIDNG_KEY_OEM_2,
+	ASCIIDNG_KEY_OEM_3,
+	ASCIIDNG_KEY_OEM_4,
+	ASCIIDNG_KEY_OEM_5,
+	ASCIIDNG_KEY_OEM_6,
+	ASCIIDNG_KEY_OEM_7,
+	ASCIIDNG_KEY_OEM_8,
+	ASCIIDNG_KEY_OEM_102,
+	ASCIIDNG_KEY_PROCESSKEY,
+	ASCIIDNG_KEY_PACKET,
+	ASCIIDNG_KEY_ATTN,
+	ASCIIDNG_KEY_CRSEL,
+	ASCIIDNG_KEY_EXSEL,
+	ASCIIDNG_KEY_EREOF,
+	ASCIIDNG_KEY_PLAY,
+	ASCIIDNG_KEY_ZOOM,
+	ASCIIDNG_KEY_NONAME,
+	ASCIIDNG_KEY_PA1,
+	ASCIIDNG_KEY_OEM_CLEAR
+};
 
-static DynamicArray g_registered_keys;
 
 void asciidng_init_keys()
 {
-	g_registered_keys = gen_dynamic_array( sizeof( RegisteredKey ) );
 
-	asciidng_register_key( "0" );
-	asciidng_register_key( "1" );
-	asciidng_register_key( "2" );
-	asciidng_register_key( "3" );
-	asciidng_register_key( "4" );
-	asciidng_register_key( "5" );
-	asciidng_register_key( "6" );
-	asciidng_register_key( "7" );
-	asciidng_register_key( "8" );
-	asciidng_register_key( "9" );
-	asciidng_register_key( "A" );
-	asciidng_register_key( "B" );
-	asciidng_register_key( "C" );
-	asciidng_register_key( "D" );
-	asciidng_register_key( "E" );
-	asciidng_register_key( "F" );
-	asciidng_register_key( "G" );
-	asciidng_register_key( "H" );
-	asciidng_register_key( "I" );
-	asciidng_register_key( "J" );
-	asciidng_register_key( "K" );
-	asciidng_register_key( "L" );
-	asciidng_register_key( "M" );
-	asciidng_register_key( "N" );
-	asciidng_register_key( "O" );
-	asciidng_register_key( "P" );
-	asciidng_register_key( "Q" );
-	asciidng_register_key( "R" );
-	asciidng_register_key( "S" );
-	asciidng_register_key( "T" );
-	asciidng_register_key( "U" );
-	asciidng_register_key( "V" );
-	asciidng_register_key( "W" );
-	asciidng_register_key( "X" );
-	asciidng_register_key( "Y" );
-	asciidng_register_key( "Z" );
-	asciidng_register_key( "LBUTTON" );
-	asciidng_register_key( "RBUTTON" );
-	asciidng_register_key( "CANCEL" );
-	asciidng_register_key( "MBUTTON" );
-	asciidng_register_key( "XBUTTON1" );
-	asciidng_register_key( "XBUTTON2" );
-	asciidng_register_key( "BACK" );
-	asciidng_register_key( "TAB" );
-	asciidng_register_key( "CLEAR" );
-	asciidng_register_key( "RETURN" );
-	asciidng_register_key( "SHIFT" );
-	asciidng_register_key( "CONTROL" );
-	asciidng_register_key( "MENU" );
-	asciidng_register_key( "PAUSE" );
-	asciidng_register_key( "CAPITAL" );
-	asciidng_register_key( "KANA" );
-	asciidng_register_key( "HANGUL" );
-	asciidng_register_key( "IME_ON" );
-	asciidng_register_key( "JUNJA" );
-	asciidng_register_key( "FINAL" );
-	asciidng_register_key( "HANJA" );
-	asciidng_register_key( "KANJI" );
-	asciidng_register_key( "IME_OFF" );
-	asciidng_register_key( "ESCAPE" );
-	asciidng_register_key( "CONVERT" );
-	asciidng_register_key( "NONCONVERT" );
-	asciidng_register_key( "ACCEPT" );
-	asciidng_register_key( "MODECHANGE" );
-	asciidng_register_key( "SPACE" );
-	asciidng_register_key( "PRIOR" );
-	asciidng_register_key( "NEXT" );
-	asciidng_register_key( "END" );
-	asciidng_register_key( "HOME" );
-	asciidng_register_key( "LEFT" );
-	asciidng_register_key( "UP" );
-	asciidng_register_key( "RIGHT" );
-	asciidng_register_key( "DOWN" );
-	asciidng_register_key( "SELECT" );
-	asciidng_register_key( "PRINT" );
-	asciidng_register_key( "EXECUTE" );
-	asciidng_register_key( "SNAPSHOT" );
-	asciidng_register_key( "INSERT" );
-	asciidng_register_key( "DELETE" );
-	asciidng_register_key( "HELP" );
-	asciidng_register_key( "LWIN" );
-	asciidng_register_key( "RWIN" );
-	asciidng_register_key( "APPS" );
-	asciidng_register_key( "SLEEP" );
-	asciidng_register_key( "NUMPAD0" );
-	asciidng_register_key( "NUMPAD1" );
-	asciidng_register_key( "NUMPAD2" );
-	asciidng_register_key( "NUMPAD3" );
-	asciidng_register_key( "NUMPAD4" );
-	asciidng_register_key( "NUMPAD5" );
-	asciidng_register_key( "NUMPAD6" );
-	asciidng_register_key( "NUMPAD7" );
-	asciidng_register_key( "NUMPAD8" );
-	asciidng_register_key( "NUMPAD9" );
-	asciidng_register_key( "MULTIPLY" );
-	asciidng_register_key( "ADD" );
-	asciidng_register_key( "SEPARATOR" );
-	asciidng_register_key( "SUBTRACT" );
-	asciidng_register_key( "DECIMAL" );
-	asciidng_register_key( "DIVIDE" );
-	asciidng_register_key( "F1" );
-	asciidng_register_key( "F2" );
-	asciidng_register_key( "F3" );
-	asciidng_register_key( "F4" );
-	asciidng_register_key( "F5" );
-	asciidng_register_key( "F6" );
-	asciidng_register_key( "F7" );
-	asciidng_register_key( "F8" );
-	asciidng_register_key( "F9" );
-	asciidng_register_key( "F10" );
-	asciidng_register_key( "F11" );
-	asciidng_register_key( "F12" );
-	asciidng_register_key( "F13" );
-	asciidng_register_key( "F14" );
-	asciidng_register_key( "F15" );
-	asciidng_register_key( "F16" );
-	asciidng_register_key( "F17" );
-	asciidng_register_key( "F18" );
-	asciidng_register_key( "F19" );
-	asciidng_register_key( "F20" );
-	asciidng_register_key( "F21" );
-	asciidng_register_key( "F22" );
-	asciidng_register_key( "F23" );
-	asciidng_register_key( "F24" );
-	asciidng_register_key( "NUMLOCK" );
-	asciidng_register_key( "SCROLL" );
-	asciidng_register_key( "LSHIFT" );
-	asciidng_register_key( "RSHIFT" );
-	asciidng_register_key( "LCONTROL" );
-	asciidng_register_key( "RCONTROL" );
-	asciidng_register_key( "LMENU" );
-	asciidng_register_key( "RMENU" );
-	asciidng_register_key( "BROWSER_BACK" );
-	asciidng_register_key( "BROWSER_FORWARD" );
-	asciidng_register_key( "BROWSER_REFRESH" );
-	asciidng_register_key( "BROWSER_STOP" );
-	asciidng_register_key( "BROWSER_SEARCH" );
-	asciidng_register_key( "BROWSER_FAVORITES" );
-	asciidng_register_key( "BROWSER_HOME" );
-	asciidng_register_key( "VOLUME_MUTE" );
-	asciidng_register_key( "VOLUME_DOWN" );
-	asciidng_register_key( "VOLUME_UP" );
-	asciidng_register_key( "MEDIA_NEXT_TRACK" );
-	asciidng_register_key( "MEDIA_PREV_TRACK" );
-	asciidng_register_key( "MEDIA_STOP" );
-	asciidng_register_key( "MEDIA_PLAY_PAUSE" );
-	asciidng_register_key( "LAUNCH_MAIL" );
-	asciidng_register_key( "LAUNCH_MEDIA_SELECT" );
-	asciidng_register_key( "LAUNCH_APP1" );
-	asciidng_register_key( "LAUNCH_APP2" );
-	asciidng_register_key( "OEM_1" );
-	asciidng_register_key( "OEM_PLUS" );
-	asciidng_register_key( "OEM_COMMA" );
-	asciidng_register_key( "OEM_MINUS" );
-	asciidng_register_key( "OEM_PERIOD" );
-	asciidng_register_key( "OEM_2" );
-	asciidng_register_key( "OEM_3" );
-	asciidng_register_key( "OEM_4" );
-	asciidng_register_key( "OEM_5" );
-	asciidng_register_key( "OEM_6" );
-	asciidng_register_key( "OEM_7" );
-	asciidng_register_key( "OEM_8" );
-	asciidng_register_key( "OEM_102" );
-	asciidng_register_key( "PROCESSKEY" );
-	asciidng_register_key( "PACKET" );
-	asciidng_register_key( "PACKET" );
-	asciidng_register_key( "ATTN" );
-	asciidng_register_key( "CRSEL" );
-	asciidng_register_key( "EXSEL" );
-	asciidng_register_key( "EREOF" );
-	asciidng_register_key( "PLAY" );
-	asciidng_register_key( "ZOOM" );
-	asciidng_register_key( "NONAME" );
-	asciidng_register_key( "PA1" );
-	asciidng_register_key( "OEM_CLEAR" );
 }
 
 void asciidng_terminate_keys()
 {
-	free_dynamic_array( &g_registered_keys );
+
 }
-
-
-int asciidng_is_key_registered( char *identifier )
-{
-	for ( size_t i = 0; i < g_registered_keys.usage; ++i )
-	{
-		if ( strcmp( identifier, ( ( RegisteredKey* ) g_registered_keys.buffer + i )->identifier ) == 0 ){
-			return 1;
-		}
-	}
-	return 0;	
-}
-
-uint16_t asciidng_get_key_code( char *identifier )
-{
-	for ( size_t i = 0; i < g_registered_keys.usage; ++i )
-	{
-		if ( strcmp( identifier, ( ( RegisteredKey* ) g_registered_keys.buffer + i )->identifier ) == 0 ){
-			return i;
-		}
-	}
-	return 0;	
-}
-
-int asciidng_register_key( char *identifier )
-{
-	if ( !identifier || asciidng_is_key_registered( identifier ) ) return 1;
-	size_t identifier_len = strlen( identifier ) + 1;
-	char *identifier_cpy = malloc( identifier_len );
-	if ( !identifier_cpy ) return 1;
-	strcpy( identifier_cpy, identifier ); 
-	RegisteredKey inp = {
-		identifier_cpy,
-	};
-	insert_data( &g_registered_keys, &inp, sizeof( RegisteredKey ) );	
-}
-
