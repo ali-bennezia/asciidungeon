@@ -9,5 +9,9 @@ void asciidng_poll_input();
 
 int asciidng_is_input_registered( char *identifier );
 int asciidng_register_input( char *identifier, uint16_t key );
+int asciidng_unregister_input( char *identifier );
+
+int asciidng_register_input_listener( char *identifier, void (*listener)(uint16_t, uint8_t) );
+int asciidng_unregister_input_listener( char *identifier, void (*listener)(uint16_t, uint8_t) );
 
 #endif
