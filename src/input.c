@@ -65,9 +65,8 @@ static void call_input_listeners( RegisteredInput *input )
 	}	
 }
 
-static int set_input_state( char *identifier, uint8_t state )
+static int set_input_state( RegisteredInput *input, uint8_t state )
 {
-	RegisteredInput *input = get_input_ptr( identifier );
 	if ( input == NULL ) return 1;
 	uint8_t p_state = input->state;
 	input->state = state;
@@ -178,6 +177,10 @@ int asciidng_unregister_input_listener( char *identifier, void (*listener)(uint1
 static void win_handle_key_event( WORD key_code, BOOL key_down )
 {
 	enum ASCIIDNG_KEY stw_key = asciidng_get_key_from_os_keycode( ( int ) key_code );
+	uint8_t new_state = (uint8_t) key_down;
+	RegisteredInput *input = get_input_ptr_from_key( ( uint16_t ) stw_key );
+	set_input_state( input, new_state );
+	
 }
 #elif defined LINMODE
 static void uni_handle_key_event()
