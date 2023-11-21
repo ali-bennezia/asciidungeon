@@ -117,9 +117,9 @@ int asciidng_is_input_registered( char *identifier )
 	return ( get_input_ptr( identifier ) != NULL );
 }
 
-int asciidng_get_key_state( uint16_t key_code )
+int asciidng_get_input_state( char *identifier )
 {
-	RegisteredInput *input = get_input_ptr_from_key( key_code );
+	RegisteredInput *input = get_input_ptr( identifier );
 	if ( input == NULL ) return 1;
 	return input->state;
 }

@@ -8,7 +8,7 @@ void asciidng_terminate_input();
 void asciidng_poll_input();
 
 int asciidng_is_input_registered( char *identifier );
-int asciidng_get_key_state( uint16_t key_code );
+int asciidng_get_input_state( char *identifier );
 int asciidng_register_input( char *identifier, uint16_t key );
 int asciidng_unregister_input( char *identifier );
 int asciidng_clear_inputs();
