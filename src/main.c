@@ -16,6 +16,26 @@
 #include "menu.h"
 #include "input.h"
 
+static void test_on_forward( uint16_t key_code, uint8_t state )
+{
+	printf("forward\n");
+}
+
+static void test_on_backward( uint16_t key_code, uint8_t state )
+{
+
+}
+
+static void test_on_rightward( uint16_t key_code, uint8_t state )
+{
+
+}
+
+static void test_on_leftward( uint16_t key_code, uint8_t state )
+{
+
+}
+
 static void terminate()
 {
 	asciidng_terminate_input();
@@ -31,6 +51,12 @@ static void init()
 	atexit( terminate );
 
 	asciidng_load_menu();
+
+	// test
+	asciidng_register_input_listener( "Forward", test_on_forward );
+	asciidng_register_input_listener( "Backward", test_on_backward );
+	asciidng_register_input_listener( "Rightward", test_on_rightward );
+	asciidng_register_input_listener( "Leftward", test_on_leftward );
 }
 
 static void loop()

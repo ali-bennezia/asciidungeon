@@ -105,11 +105,23 @@ void asciidng_init_input()
 	#elif defined LINMODE
 
 	#endif
+
+	asciidng_register_input( "Forward", ASCIIDNG_KEY_W );
+	asciidng_register_input( "Backward", ASCIIDNG_KEY_S );
+	asciidng_register_input( "Rightward", ASCIIDNG_KEY_D );	
+	asciidng_register_input( "Leftward", ASCIIDNG_KEY_A );	
 }
 
 int asciidng_is_input_registered( char *identifier )
 {
 	return ( get_input_ptr( identifier ) != NULL );
+}
+
+int asciidng_get_key_state( uint16_t key_code )
+{
+	RegisteredInput *input = get_input_ptr_from_key( key_code );
+	if ( input == NULL ) return 1;
+	return input->state;
 }
 
 int asciidng_register_input( char *identifier, uint16_t key )
@@ -146,6 +158,16 @@ int asciidng_unregister_input( char *identifier )
 	}
 	
 	return 1;
+}
+
+int asciidng_clear_inputs()
+{
+	for ( size_t i = 0; i < g_registered_inputs.usage; ++i )
+	{	
+		RegisteredInput *input = ( RegisteredInput* ) g_registered_inputs.buffer + i;
+		free_dynamic_array( &input->listeners );
+	}
+	clear_dynamic_array( &g_registered_inputs, sizeof( RegisteredInput ) );	
 }
 
 int asciidng_register_input_listener( char *identifier, void (*listener)(uint16_t, uint8_t) )
@@ -192,6 +214,7 @@ static void uni_handle_key_event()
 
 void asciidng_terminate_input()
 {
+	asciidng_clear_inputs();
 	free_dynamic_array( &g_registered_inputs );
 	asciidng_terminate_keys();
 }
