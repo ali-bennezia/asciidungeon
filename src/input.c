@@ -24,7 +24,9 @@ typedef struct RegisteredInput {
 	DynamicArray listeners;
 } RegisteredInput;
 
-static DynamicArray g_registered_inputs;
+static DynamicArray g_registered_inputs, g_mouse_event_listeners;
+
+static IntVec2 g_mouse_position = { 0, 0 };
 
 // static utils
 
@@ -86,6 +88,24 @@ static int get_listener_index( RegisteredInput *input, void (*listener)(uint16_t
 	return -1;
 }
 
+static int get_mouse_event_listener_index( void (*listener)(MouseEvent) )
+{
+	for ( size_t i = 0; i < g_mouse_event_listeners.usage; ++i )
+	{
+		void (*i_listener)(MouseEvent) = *( ( void(**)(MouseEvent) ) g_mouse_event_listeners.buffer + i );
+		if ( i_listener == listener ) return i;	
+	}
+	return -1;
+}
+
+static void call_mouse_event_listeners( MouseEvent event )
+{
+	for ( size_t i = 0; i < g_mouse_event_listeners.usage; ++i )
+	{
+		void (*i_listener)(MouseEvent) = *( ( void(**)(MouseEvent) ) g_mouse_event_listeners.buffer + i );
+		i_listener( event );
+	}
+}
 
 // input funcs
 
@@ -93,6 +113,7 @@ void asciidng_init_input()
 {
 	asciidng_init_keys();
 	g_registered_inputs = gen_dynamic_array( sizeof( RegisteredInput ) );
+	g_mouse_event_listeners = gen_dynamic_array( sizeof( void(*)(MouseEvent) ) );
 
 	#ifdef WINMODE
 
@@ -170,6 +191,18 @@ int asciidng_clear_inputs()
 	clear_dynamic_array( &g_registered_inputs, sizeof( RegisteredInput ) );	
 }
 
+int asciidng_register_mouse_event_listener( void (*listener)(MouseEvent) )
+{
+	insert_data( &g_mouse_event_listeners, &listener, sizeof( void(*)(MouseEvent) ) );
+}
+
+int asciidng_unregister_mouse_event_listener( void (*listener)(MouseEvent) )
+{
+	int index = get_mouse_event_listener_index( listener );
+	if ( index < 0 ) return 1;
+	remove_data( &g_mouse_event_listeners, index, sizeof( void(*)(MouseEvent) ) );
+}
+
 int asciidng_register_input_listener( char *identifier, void (*listener)(uint16_t, uint8_t) )
 {
 	if ( !identifier || !asciidng_is_input_registered( identifier ) ) return 1;
@@ -193,8 +226,6 @@ int asciidng_unregister_input_listener( char *identifier, void (*listener)(uint1
 	return 0;
 }
 
-#include <stdio.h>
-
 #ifdef WINMODE
 static void win_handle_key_event( WORD key_code, BOOL key_down )
 {
@@ -202,7 +233,29 @@ static void win_handle_key_event( WORD key_code, BOOL key_down )
 	uint8_t new_state = (uint8_t) key_down;
 	RegisteredInput *input = get_input_ptr_from_key( ( uint16_t ) stw_key );
 	set_input_state( input, new_state );
-	
+}
+
+static void win_handle_mouse_event( MOUSE_EVENT_RECORD event )
+{
+
+	switch ( event.dwEventFlags )
+	{
+		case 0:
+			break;
+		case DOUBLE_CLICK:
+
+			break;
+		case MOUSE_HWHEELED:
+
+			break;
+		case MOUSE_MOVED:
+
+			break;
+		case MOUSE_WHEELED:
+
+			break;
+	}
+
 }
 #elif defined LINMODE
 static void uni_handle_key_event()
@@ -215,6 +268,7 @@ static void uni_handle_key_event()
 void asciidng_terminate_input()
 {
 	asciidng_clear_inputs();
+	free_dynamic_array( &g_mouse_event_listeners );
 	free_dynamic_array( &g_registered_inputs );
 	asciidng_terminate_keys();
 }
@@ -236,6 +290,7 @@ void asciidng_poll_input()
 				win_handle_key_event( g_input_record.Event.KeyEvent.wVirtualKeyCode, g_input_record.Event.KeyEvent.bKeyDown );
 				break;
 			case MOUSE_EVENT:
+				win_handle_mouse_event( g_input_record.Event.MouseEvent );
 				break;
 			case WINDOW_BUFFER_SIZE_EVENT:
 			case FOCUS_EVENT:

@@ -16,24 +16,30 @@
 #include "menu.h"
 #include "input.h"
 
-static void test_on_forward( uint16_t key_code, uint8_t state )
+Model *cube_model;
+
+static void debug_loop()
 {
-	printf("forward\n");
-}
+	cube_model->rotation.x += 7;
+	cube_model->rotation.y += 8;
+	cube_model->rotation.z += 5;
 
-static void test_on_backward( uint16_t key_code, uint8_t state )
-{
-
-}
-
-static void test_on_rightward( uint16_t key_code, uint8_t state )
-{
-
-}
-
-static void test_on_leftward( uint16_t key_code, uint8_t state )
-{
-
+	if ( asciidng_get_input_state( "Forward" ) == 1 )
+	{
+		translate_player(0, 0, 1);
+	}
+	if ( asciidng_get_input_state( "Backward" ) == 1 )
+	{
+		translate_player(0, 0, -1);
+	}
+	if ( asciidng_get_input_state( "Rightward" ) == 1 )
+	{
+		translate_player(1, 0, 0);
+	}
+	if ( asciidng_get_input_state( "Leftward" ) == 1 )
+	{
+		translate_player(-1, 0, 0);
+	}
 }
 
 static void terminate()
@@ -52,19 +58,28 @@ static void init()
 
 	asciidng_load_menu();
 
-	// test
-	asciidng_register_input_listener( "Forward", test_on_forward );
-	asciidng_register_input_listener( "Backward", test_on_backward );
-	asciidng_register_input_listener( "Rightward", test_on_rightward );
-	asciidng_register_input_listener( "Leftward", test_on_leftward );
+	Mesh *cube_mesh = load_mesh( "assets/cube.obj" );
+	cube_model = gen_model();
+	cube_model->mesh = cube_mesh;
+	Vec3 cube_pos = {0, 0, 15}, cube_rot = {0, 75, 0};
+	cube_model->position = cube_pos;
+	cube_model->rotation = cube_rot;
+
+	RGB white = { 255, 255, 255 };
+
+	Vec3 dir = { -10, -5, -10 };
+	dir = vec3_normalize( dir );
+
+	add_ambient_light( "Ambient light", 55, white );
+	add_directional_light( "Directional light", 100, dir, white );
 }
 
 static void loop()
 {
-
 	while (1){
 		asciidng_poll_input();
 		asciigl_process_frame();
+		debug_loop();
 	}
 }
 
