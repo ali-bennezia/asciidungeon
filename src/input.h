@@ -6,18 +6,25 @@
 
 enum ASCIIDNG_MOUSE_EVENT {
 	ASCIIDNG_MOUSE_BUTTON,
+	ASCIIDNG_MOUSE_DCLICK,
 	ASCIIDNG_MOUSE_MOVE,
 	ASCIIDNG_MOUSE_VWHEEL,
 	ASCIIDNG_MOUSE_HWHEEL	
 };
 
+enum ASCIIDNG_MOUSE_BUTTON {
+	ASCIIDNG_MOUSE_LBTN,
+	ASCIIDNG_MOUSE_RBTN
+};
+
 typedef struct _MouseButtonEvent {
-	int button, state;
+	enum ASCIIDNG_MOUSE_BUTTON button;
+	unsigned short state;
 } MouseButtonEvent;
 
 typedef struct _MouseMoveEvent {
 	int mouse_position_x, mouse_position_y;
-	float mouse_delta_x, mouse_delta_y;
+	int mouse_delta_x, mouse_delta_y;
 } MouseMoveEvent;
 
 typedef struct _MouseEvent {

@@ -42,6 +42,11 @@ static void debug_loop()
 	}
 }
 
+static void debug_mouse_event_listener( MouseEvent ev )
+{
+
+}
+
 static void terminate()
 {
 	asciidng_terminate_input();
@@ -72,11 +77,15 @@ static void init()
 
 	add_ambient_light( "Ambient light", 55, white );
 	add_directional_light( "Directional light", 100, dir, white );
+
+	// debug
+	asciidng_register_mouse_event_listener( debug_mouse_event_listener );
 }
 
 static void loop()
 {
-	while (1){
+	while (1)
+	{
 		asciidng_poll_input();
 		asciigl_process_frame();
 		debug_loop();

@@ -5,7 +5,7 @@
 #ifdef WINMODE
 #include <windows.h>
 static HANDLE g_h_std_in, g_h_std_out;
-static INPUT_RECORD g_input_record;
+static INPUT_RECORD g_input_records[ 128 ];
 static CONSOLE_CURSOR_INFO g_cci;
 static DWORD g_events;
 #elif defined LINMODE
@@ -26,7 +26,7 @@ typedef struct RegisteredInput {
 
 static DynamicArray g_registered_inputs, g_mouse_event_listeners;
 
-static IntVec2 g_mouse_position = { 0, 0 };
+static IntVec2 g_mouse_position = { 0, 0 }, g_mouse_btn_states = { 0, 0 };
 
 // static utils
 
@@ -121,7 +121,7 @@ void asciidng_init_input()
 	g_h_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	SetConsoleCursorInfo( g_h_std_out, &g_cci );
-	SetConsoleMode( g_h_std_in, ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT );
+	SetConsoleMode( g_h_std_in, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT );
 
 	#elif defined LINMODE
 
@@ -235,28 +235,60 @@ static void win_handle_key_event( WORD key_code, BOOL key_down )
 	set_input_state( input, new_state );
 }
 
-static void win_handle_mouse_event( MOUSE_EVENT_RECORD event )
+static void win_poll_mouse_events()
 {
+	MouseEvent ev;
 
-	switch ( event.dwEventFlags )
+	IntVec2 old_mouse_pos = g_mouse_position;
+
+	POINT m_pos;
+	GetCursorPos( &m_pos );
+	g_mouse_position.x = m_pos.x;
+	g_mouse_position.y = m_pos.y;
+
+	IntVec2 delta_mouse_pos = {
+		g_mouse_position.x - old_mouse_pos.x,
+		g_mouse_position.y - old_mouse_pos.y
+	};
+
+	if ( old_mouse_pos.x != g_mouse_position.x && old_mouse_pos.y != g_mouse_position.y )
 	{
-		case 0:
-			break;
-		case DOUBLE_CLICK:
-
-			break;
-		case MOUSE_HWHEELED:
-
-			break;
-		case MOUSE_MOVED:
-
-			break;
-		case MOUSE_WHEELED:
-
-			break;
+		ev.type = ASCIIDNG_MOUSE_MOVE;
+		ev.move_data.mouse_delta_x = delta_mouse_pos.x;
+		ev.move_data.mouse_delta_y = delta_mouse_pos.y;
+		ev.move_data.mouse_position_x = g_mouse_position.x;
+		ev.move_data.mouse_position_y = g_mouse_position.y;
+		call_mouse_event_listeners( ev );
 	}
 
+	SHORT lbtndata = GetAsyncKeyState( VK_LBUTTON );
+	short left_btn_state = ( lbtndata >> 16 != 0 );
+	SHORT rbtndata = GetAsyncKeyState( VK_RBUTTON );
+	short right_btn_state = ( rbtndata >> 16 != 0 );
+
+	IntVec2 new_btn_states = {
+		left_btn_state,
+		right_btn_state
+	}, old_btn_states = g_mouse_btn_states;
+	g_mouse_btn_states = new_btn_states;
+	
+	if ( new_btn_states.x != old_btn_states.x )
+	{
+		ev.type = ASCIIDNG_MOUSE_BUTTON;
+		ev.button_data.button = ASCIIDNG_MOUSE_LBTN;	
+		ev.button_data.state = g_mouse_btn_states.x;
+		call_mouse_event_listeners( ev );
+	}
+
+	if ( new_btn_states.y != old_btn_states.y )
+	{
+		ev.type = ASCIIDNG_MOUSE_BUTTON;
+		ev.button_data.button = ASCIIDNG_MOUSE_RBTN;	
+		ev.button_data.state = g_mouse_btn_states.y;
+		call_mouse_event_listeners( ev );
+	}
 }
+
 #elif defined LINMODE
 static void uni_handle_key_event()
 {
@@ -277,21 +309,22 @@ void asciidng_poll_input()
 {
 	#ifdef WINMODE
 
+	win_poll_mouse_events();
+
 	DWORD awaiting_events;
 	GetNumberOfConsoleInputEvents( g_h_std_in, &awaiting_events );
 
 	if ( awaiting_events <= 0 ) return;
 
-	for ( size_t r = 0; r < awaiting_events; ++r ){
-		ReadConsoleInput( g_h_std_in, &g_input_record, 1, &g_events );
-		switch ( g_input_record.EventType )
+	ReadConsoleInput( g_h_std_in, &g_input_records[ 0 ], 128, &g_events );
+	for ( size_t r = 0; r < g_events; ++r ){
+		INPUT_RECORD input_record = g_input_records[ r ];
+		switch ( input_record.EventType )
 		{
 			case KEY_EVENT:
-				win_handle_key_event( g_input_record.Event.KeyEvent.wVirtualKeyCode, g_input_record.Event.KeyEvent.bKeyDown );
+				win_handle_key_event( input_record.Event.KeyEvent.wVirtualKeyCode, input_record.Event.KeyEvent.bKeyDown );
 				break;
 			case MOUSE_EVENT:
-				win_handle_mouse_event( g_input_record.Event.MouseEvent );
-				break;
 			case WINDOW_BUFFER_SIZE_EVENT:
 			case FOCUS_EVENT:
 			case MENU_EVENT:
@@ -300,5 +333,6 @@ void asciidng_poll_input()
 				break;
 		}
 	}
+
 	#endif
 }
