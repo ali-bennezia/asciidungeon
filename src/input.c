@@ -4,6 +4,7 @@
 
 #ifdef WINMODE
 #include <windows.h>
+static HWND g_h_console;
 static HANDLE g_h_std_in, g_h_std_out;
 static INPUT_RECORD g_input_records[ 128 ];
 static CONSOLE_CURSOR_INFO g_cci;
@@ -120,6 +121,8 @@ void asciidng_init_input()
 	g_h_std_in = GetStdHandle(STD_INPUT_HANDLE);
 	g_h_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
 
+	g_h_console = GetConsoleWindow();
+
 	SetConsoleCursorInfo( g_h_std_out, &g_cci );
 	SetConsoleMode( g_h_std_in, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT );
 
@@ -226,6 +229,27 @@ int asciidng_unregister_input_listener( char *identifier, void (*listener)(uint1
 	return 0;
 }
 
+int asciidng_hide_mouse()
+{
+	#ifdef WINMODE
+
+	RECT rect;
+	
+	GetClientRect( g_h_console, &rect );
+	ClientToScreen( g_h_console, ( POINT* ) &rect.left ); 
+	ClientToScreen( g_h_console, ( POINT* ) &rect.right );
+	ClipCursor( &rect );
+ 
+	#elif defined LINMODE
+
+	#endif
+}
+
+int asciidng_show_mouse()
+{
+	ClipCursor( NULL );
+}
+
 #ifdef WINMODE
 static void win_handle_key_event( WORD key_code, BOOL key_down )
 {
@@ -314,24 +338,26 @@ void asciidng_poll_input()
 	DWORD awaiting_events;
 	GetNumberOfConsoleInputEvents( g_h_std_in, &awaiting_events );
 
-	if ( awaiting_events <= 0 ) return;
+	if ( awaiting_events > 0 ){
 
-	ReadConsoleInput( g_h_std_in, &g_input_records[ 0 ], 128, &g_events );
-	for ( size_t r = 0; r < g_events; ++r ){
-		INPUT_RECORD input_record = g_input_records[ r ];
-		switch ( input_record.EventType )
-		{
-			case KEY_EVENT:
-				win_handle_key_event( input_record.Event.KeyEvent.wVirtualKeyCode, input_record.Event.KeyEvent.bKeyDown );
-				break;
-			case MOUSE_EVENT:
-			case WINDOW_BUFFER_SIZE_EVENT:
-			case FOCUS_EVENT:
-			case MENU_EVENT:
-				break;
-			default:
-				break;
+		ReadConsoleInput( g_h_std_in, &g_input_records[ 0 ], 128, &g_events );
+		for ( size_t r = 0; r < g_events; ++r ){
+			INPUT_RECORD input_record = g_input_records[ r ];
+			switch ( input_record.EventType )
+			{
+				case KEY_EVENT:
+					win_handle_key_event( input_record.Event.KeyEvent.wVirtualKeyCode, input_record.Event.KeyEvent.bKeyDown );
+					break;
+				case MOUSE_EVENT:
+				case WINDOW_BUFFER_SIZE_EVENT:
+				case FOCUS_EVENT:
+				case MENU_EVENT:
+					break;
+				default:
+					break;
+			}
 		}
+
 	}
 
 	#endif

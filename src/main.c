@@ -44,7 +44,11 @@ static void debug_loop()
 
 static void debug_mouse_event_listener( MouseEvent ev )
 {
-
+	if ( ev.type == ASCIIDNG_MOUSE_MOVE )
+	{
+		rotate_player(0, ( float ) -ev.move_data.mouse_delta_x / 50.0, 0);
+		rotate_player(( float ) -ev.move_data.mouse_delta_y / 50.0, 0, 0);	
+	}
 }
 
 static void terminate()
@@ -80,6 +84,7 @@ static void init()
 
 	// debug
 	asciidng_register_mouse_event_listener( debug_mouse_event_listener );
+
 }
 
 static void loop()
@@ -99,6 +104,7 @@ int main( int argc, char **argv )
 #endif
 {
 	init();
+	asciidng_hide_mouse();
 	loop();
 	
 	return 0;
