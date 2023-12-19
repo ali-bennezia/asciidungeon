@@ -48,8 +48,10 @@ int asciidng_clear_inputs();
 
 int asciidng_register_mouse_event_listener( void (*listener)(MouseEvent) ); 
 int asciidng_unregister_mouse_event_listener( void (*listener)(MouseEvent) );
+
 int asciidng_hide_mouse();
 int asciidng_show_mouse(); 
+int asciidng_center_mouse();
 
 int asciidng_register_input_listener( char *identifier, void (*listener)(uint16_t, uint8_t) );
 int asciidng_unregister_input_listener( char *identifier, void (*listener)(uint16_t, uint8_t) );

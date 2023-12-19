@@ -46,8 +46,8 @@ static void debug_mouse_event_listener( MouseEvent ev )
 {
 	if ( ev.type == ASCIIDNG_MOUSE_MOVE )
 	{
-		rotate_player(0, ( float ) -ev.move_data.mouse_delta_x / 50.0, 0);
-		rotate_player(( float ) -ev.move_data.mouse_delta_y / 50.0, 0, 0);	
+		rotate_player(0, ( float ) -ev.move_data.mouse_delta_x / 30.0, 0);
+		rotate_player(( float ) -ev.move_data.mouse_delta_y / 30.0, 0, 0);	
 	}
 }
 

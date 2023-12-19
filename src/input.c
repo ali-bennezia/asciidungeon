@@ -1,6 +1,7 @@
 #include "input.h"
 #include "conf.h"
 #include "keys.h"
+#include "boolval.h"
 
 #ifdef WINMODE
 #include <windows.h>
@@ -28,6 +29,9 @@ typedef struct RegisteredInput {
 static DynamicArray g_registered_inputs, g_mouse_event_listeners;
 
 static IntVec2 g_mouse_position = { 0, 0 }, g_mouse_btn_states = { 0, 0 };
+static IntVec2 g_old_mouse_pos = { 0, 0 };
+
+static boolval g_lock_mouse = false;
 
 // static utils
 
@@ -231,6 +235,9 @@ int asciidng_unregister_input_listener( char *identifier, void (*listener)(uint1
 
 int asciidng_hide_mouse()
 {
+	g_lock_mouse = true;
+	asciidng_center_mouse();
+
 	#ifdef WINMODE
 
 	RECT rect;
@@ -239,7 +246,7 @@ int asciidng_hide_mouse()
 	ClientToScreen( g_h_console, ( POINT* ) &rect.left ); 
 	ClientToScreen( g_h_console, ( POINT* ) &rect.right );
 	ClipCursor( &rect );
- 
+
 	#elif defined LINMODE
 
 	#endif
@@ -247,7 +254,42 @@ int asciidng_hide_mouse()
 
 int asciidng_show_mouse()
 {
+	g_lock_mouse = false;
+
+	#ifdef WINMODE
 	ClipCursor( NULL );
+	#elif defined LINMODE
+	#endif
+}
+
+int asciidng_center_mouse()
+{
+	IntVec2 delta_mouse = {
+		g_mouse_position.x - g_old_mouse_pos.x,
+		g_mouse_position.y - g_old_mouse_pos.y
+	};
+
+	#ifdef WINMODE
+
+	RECT rect;
+
+	GetClientRect( g_h_console, &rect );
+	ClientToScreen( g_h_console, ( POINT* ) &rect.left );
+	ClientToScreen( g_h_console, ( POINT* ) &rect.right );
+
+	int X =	rect.left + ( (int) rect.right - (int) rect.left ) / 2.0;
+	int Y =	rect.bottom + ( (int) rect.top - (int) rect.bottom ) / 2.0;
+
+	SetCursorPos( X, Y );
+
+	g_mouse_position.x = X;
+	g_mouse_position.y = Y;
+	g_old_mouse_pos.x = g_mouse_position.x - delta_mouse.x;
+	g_old_mouse_pos.y = g_mouse_position.y - delta_mouse.y;
+
+	#elif define LINMODE
+
+	#endif
 }
 
 #ifdef WINMODE
@@ -263,19 +305,19 @@ static void win_poll_mouse_events()
 {
 	MouseEvent ev;
 
-	IntVec2 old_mouse_pos = g_mouse_position;
-
 	POINT m_pos;
 	GetCursorPos( &m_pos );
+	g_old_mouse_pos.x = g_mouse_position.x;
+	g_old_mouse_pos.y = g_mouse_position.y;
 	g_mouse_position.x = m_pos.x;
 	g_mouse_position.y = m_pos.y;
 
 	IntVec2 delta_mouse_pos = {
-		g_mouse_position.x - old_mouse_pos.x,
-		g_mouse_position.y - old_mouse_pos.y
+		g_mouse_position.x - g_old_mouse_pos.x,
+		g_mouse_position.y - g_old_mouse_pos.y
 	};
 
-	if ( old_mouse_pos.x != g_mouse_position.x && old_mouse_pos.y != g_mouse_position.y )
+	if ( g_old_mouse_pos.x != g_mouse_position.x || g_old_mouse_pos.y != g_mouse_position.y )
 	{
 		ev.type = ASCIIDNG_MOUSE_MOVE;
 		ev.move_data.mouse_delta_x = delta_mouse_pos.x;
@@ -323,6 +365,7 @@ static void uni_handle_key_event()
 
 void asciidng_terminate_input()
 {
+	asciidng_show_mouse();
 	asciidng_clear_inputs();
 	free_dynamic_array( &g_mouse_event_listeners );
 	free_dynamic_array( &g_registered_inputs );
@@ -333,7 +376,6 @@ void asciidng_poll_input()
 {
 	#ifdef WINMODE
 
-	win_poll_mouse_events();
 
 	DWORD awaiting_events;
 	GetNumberOfConsoleInputEvents( g_h_std_in, &awaiting_events );
@@ -360,5 +402,9 @@ void asciidng_poll_input()
 
 	}
 
+	win_poll_mouse_events();
 	#endif
+
+	if ( g_lock_mouse )
+		asciidng_center_mouse();
 }
