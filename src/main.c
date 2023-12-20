@@ -116,7 +116,7 @@ int main( int argc, char **argv )
 #endif
 {
 	init();
-	//asciidng_hide_mouse();
+	asciidng_hide_mouse();
 	loop();
 	
 	return 0;

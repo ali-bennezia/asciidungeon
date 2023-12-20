@@ -378,18 +378,18 @@ static void uni_handle_key_event()
 
 void asciidng_terminate_input()
 {
+	asciidng_show_mouse();
+	asciidng_clear_inputs();
+	free_dynamic_array( &g_mouse_event_listeners );
+	free_dynamic_array( &g_registered_inputs );
+	asciidng_terminate_keys();
+
 	#ifdef WINMODE
 	DestroyCursor( g_hcArrowCursor );
 	DestroyCursor( g_hcNoCursor );
 	#elif defined LINMODE
 
 	#endif
-
-	asciidng_show_mouse();
-	asciidng_clear_inputs();
-	free_dynamic_array( &g_mouse_event_listeners );
-	free_dynamic_array( &g_registered_inputs );
-	asciidng_terminate_keys();
 }
 
 void asciidng_poll_input()
