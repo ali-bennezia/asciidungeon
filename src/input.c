@@ -4,12 +4,16 @@
 #include "boolval.h"
 
 #ifdef WINMODE
+#define OEMRESOURCE
 #include <windows.h>
 static HWND g_h_console;
 static HANDLE g_h_std_in, g_h_std_out;
 static INPUT_RECORD g_input_records[ 128 ];
 static CONSOLE_CURSOR_INFO g_cci;
 static DWORD g_events;
+
+static HANDLE g_hArrowCursor, g_hNoCursor;
+static HCURSOR g_hcArrowCursor, g_hcNoCursor;
 #elif defined LINMODE
 #include <unistd.h>
 #endif
@@ -130,6 +134,12 @@ void asciidng_init_input()
 	SetConsoleCursorInfo( g_h_std_out, &g_cci );
 	SetConsoleMode( g_h_std_in, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT );
 
+	g_hArrowCursor = LoadImage( NULL, MAKEINTRESOURCE( IDC_ARROW ), IMAGE_CURSOR, 0, 0, LR_SHARED );
+	g_hNoCursor = LoadImage( GetModuleHandle( NULL ), "../assets/nocursor.cur", IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE );
+
+	g_hcArrowCursor = CopyCursor( g_hArrowCursor );
+	g_hcNoCursor = CopyCursor( g_hNoCursor );
+
 	#elif defined LINMODE
 
 	#endif
@@ -247,6 +257,8 @@ int asciidng_hide_mouse()
 	ClientToScreen( g_h_console, ( POINT* ) &rect.right );
 	ClipCursor( &rect );
 
+	SetSystemCursor( g_hcNoCursor, OCR_NORMAL );
+
 	#elif defined LINMODE
 
 	#endif
@@ -258,6 +270,7 @@ int asciidng_show_mouse()
 
 	#ifdef WINMODE
 	ClipCursor( NULL );
+	SetSystemCursor( g_hcArrowCursor, OCR_NORMAL );
 	#elif defined LINMODE
 	#endif
 }
@@ -365,6 +378,13 @@ static void uni_handle_key_event()
 
 void asciidng_terminate_input()
 {
+	#ifdef WINMODE
+	DestroyCursor( g_hcArrowCursor );
+	DestroyCursor( g_hcNoCursor );
+	#elif defined LINMODE
+
+	#endif
+
 	asciidng_show_mouse();
 	asciidng_clear_inputs();
 	free_dynamic_array( &g_mouse_event_listeners );
@@ -375,7 +395,6 @@ void asciidng_terminate_input()
 void asciidng_poll_input()
 {
 	#ifdef WINMODE
-
 
 	DWORD awaiting_events;
 	GetNumberOfConsoleInputEvents( g_h_std_in, &awaiting_events );

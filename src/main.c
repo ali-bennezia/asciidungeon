@@ -1,9 +1,10 @@
 #include "conf.h"
 
+#include <signal.h>
+
 #ifdef WINMODE
 #include <windows.h>
 #elif define LINMODE
-
 #endif
 
 #include <stdio.h>
@@ -15,8 +16,11 @@
 #include "ui.h"
 #include "menu.h"
 #include "input.h"
+#include "boolval.h"
 
 Model *cube_model;
+
+boolval g_running = true;
 
 static void debug_loop()
 {
@@ -53,8 +57,14 @@ static void debug_mouse_event_listener( MouseEvent ev )
 
 static void terminate()
 {
+	g_running = false;
 	asciidng_terminate_input();
 	asciidng_terminate_workspace();
+}
+
+void sigint_handler( int sig )
+{
+	terminate();
 }
 
 static void init()
@@ -64,6 +74,7 @@ static void init()
 	asciidng_init_input();
 
 	atexit( terminate );
+	signal( SIGINT, sigint_handler );
 
 	asciidng_load_menu();
 
@@ -82,6 +93,7 @@ static void init()
 	add_ambient_light( "Ambient light", 55, white );
 	add_directional_light( "Directional light", 100, dir, white );
 
+
 	// debug
 	asciidng_register_mouse_event_listener( debug_mouse_event_listener );
 
@@ -89,7 +101,7 @@ static void init()
 
 static void loop()
 {
-	while (1)
+	while (g_running)
 	{
 		asciidng_poll_input();
 		asciigl_process_frame();
@@ -104,7 +116,7 @@ int main( int argc, char **argv )
 #endif
 {
 	init();
-	asciidng_hide_mouse();
+	//asciidng_hide_mouse();
 	loop();
 	
 	return 0;
