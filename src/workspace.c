@@ -9,9 +9,9 @@ static DynamicArray buttons, images, frames, texts;
 
 void asciidng_init_workspace()
 {
-	tiles = gen_dynamic_array( sizeof( Model* ) );
-	props = gen_dynamic_array( sizeof( Model* ) );
-	entities = gen_dynamic_array( sizeof( Model* ) );
+	tiles = gen_dynamic_array( sizeof( TileInstance* ) );
+	props = gen_dynamic_array( sizeof( PropInstance* ) );
+	entities = gen_dynamic_array( sizeof( EntityInstance* ) );
 
 	buttons = gen_dynamic_array( sizeof( UIButton* ) );
 	images = gen_dynamic_array( sizeof( UIImage* ) ); 

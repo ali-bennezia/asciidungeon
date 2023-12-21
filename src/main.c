@@ -12,6 +12,7 @@
 
 #include <asciigl.h>
 
+#include "registry.h"
 #include "workspace.h"
 #include "ui.h"
 #include "menu.h"
@@ -60,6 +61,7 @@ static void terminate()
 	g_running = false;
 	asciidng_terminate_input();
 	asciidng_terminate_workspace();
+	asciidng_terminate_registry();
 }
 
 void sigint_handler( int sig )
@@ -70,6 +72,7 @@ void sigint_handler( int sig )
 static void init()
 {
 	asciigl_init();
+	asciidng_init_registry();
 	asciidng_init_workspace();
 	asciidng_init_input();
 
@@ -105,7 +108,7 @@ static void loop()
 	{
 		asciidng_poll_input();
 		asciigl_process_frame();
-		debug_loop();
+		//debug_loop();
 	}
 }
 
@@ -116,7 +119,7 @@ int main( int argc, char **argv )
 #endif
 {
 	init();
-	asciidng_hide_mouse();
+	//asciidng_hide_mouse();
 	loop();
 	
 	return 0;
