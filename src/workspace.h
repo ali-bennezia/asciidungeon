@@ -1,7 +1,7 @@
 #ifndef _WORKSPACE_H_
 #define _WORKSPACE_H_
 
-#include "utils.h"
+#include "mutils.h"
 
 struct Model;
 typedef struct Model Model;
@@ -23,5 +23,7 @@ typedef struct EntityInstance {
 
 void asciidng_init_workspace();
 void asciidng_terminate_workspace();
+
+TileInstance *gen_tile( const char *tile_name, int x, int y, int z );
 
 #endif

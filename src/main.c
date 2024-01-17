@@ -18,47 +18,18 @@
 #include "menu.h"
 #include "input.h"
 #include "boolval.h"
+#include "player.h"
 
-Model *cube_model;
+#define DEBUG
+
 
 boolval g_running = true;
 
-static void debug_loop()
-{
-	cube_model->rotation.x += 7;
-	cube_model->rotation.y += 8;
-	cube_model->rotation.z += 5;
-
-	if ( asciidng_get_input_state( "Forward" ) == 1 )
-	{
-		translate_player(0, 0, 1);
-	}
-	if ( asciidng_get_input_state( "Backward" ) == 1 )
-	{
-		translate_player(0, 0, -1);
-	}
-	if ( asciidng_get_input_state( "Rightward" ) == 1 )
-	{
-		translate_player(1, 0, 0);
-	}
-	if ( asciidng_get_input_state( "Leftward" ) == 1 )
-	{
-		translate_player(-1, 0, 0);
-	}
-}
-
-static void debug_mouse_event_listener( MouseEvent ev )
-{
-	if ( ev.type == ASCIIDNG_MOUSE_MOVE )
-	{
-		rotate_player(0, ( float ) -ev.move_data.mouse_delta_x / 30.0, 0);
-		rotate_player(( float ) -ev.move_data.mouse_delta_y / 30.0, 0, 0);	
-	}
-}
 
 static void terminate()
 {
 	g_running = false;
+	asciidng_terminate_player();
 	asciidng_terminate_input();
 	asciidng_terminate_workspace();
 	asciidng_terminate_registry();
@@ -75,18 +46,19 @@ static void init()
 	asciidng_init_registry();
 	asciidng_init_workspace();
 	asciidng_init_input();
+	asciidng_init_player();
 
 	atexit( terminate );
 	signal( SIGINT, sigint_handler );
 
 	asciidng_load_menu();
 
-	Mesh *cube_mesh = load_mesh( "assets/cube.obj" );
+	/*Mesh *cube_mesh = load_mesh( "assets/cube.obj" );
 	cube_model = gen_model();
 	cube_model->mesh = cube_mesh;
 	Vec3 cube_pos = {0, 0, 15}, cube_rot = {0, 75, 0};
 	cube_model->position = cube_pos;
-	cube_model->rotation = cube_rot;
+	cube_model->rotation = cube_rot;*/
 
 	RGB white = { 255, 255, 255 };
 
@@ -96,10 +68,17 @@ static void init()
 	add_ambient_light( "Ambient light", 55, white );
 	add_directional_light( "Directional light", 100, dir, white );
 
-
 	// debug
-	asciidng_register_mouse_event_listener( debug_mouse_event_listener );
-
+	asciidng_register_tile_definition( "test_tile", NULL, NULL );
+	ivec3 coords = {0, 0, 15};
+	TileInstance *instance = gen_tile( "test_tile", 0, 0, 15 );
+	gen_tile( "test_tile", 0, -1, 14 );
+	gen_tile( "test_tile", 0, -1, 13 );
+	gen_tile( "test_tile", 0, -1, 12 );
+	gen_tile( "test_tile", 0, -1, 2 );
+	gen_tile( "test_tile", 0, -1, 1 );
+	gen_tile( "test_tile", 0, -1, 0 );
+	asciidng_hide_mouse();
 }
 
 static void loop()
@@ -108,7 +87,7 @@ static void loop()
 	{
 		asciidng_poll_input();
 		asciigl_process_frame();
-		//debug_loop();
+		asciidng_player_loop();
 	}
 }
 
@@ -119,7 +98,6 @@ int main( int argc, char **argv )
 #endif
 {
 	init();
-	//asciidng_hide_mouse();
 	loop();
 	
 	return 0;

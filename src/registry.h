@@ -1,7 +1,7 @@
 #ifndef _REGISTRY_H_
 #define _REGISTRY_H_
 
-#include "utils.h"
+#include "mutils.h"
 
 struct Mesh;
 struct Texture;
@@ -30,13 +30,13 @@ typedef struct EntityDefinition {
 void asciidng_init_registry();
 void asciidng_terminate_registry();
 
-TileDefinition* asciidng_get_tile_definition( const char name );
+TileDefinition* asciidng_get_tile_definition( const char *name );
 int asciidng_register_tile_definition( const char *name, Mesh *mesh, Texture *texture );
 
-PropDefinition* asciidng_get_prop_definition( const char name );
+PropDefinition* asciidng_get_prop_definition( const char *name );
 int asciidng_register_prop_definition( const char *name, fvec3 scale, Mesh *mesh, Texture *texture );
 
-TileDefinition* asciidng_get_entity_definition( const char name );
+EntityDefinition* asciidng_get_entity_definition( const char *name );
 int asciidng_register_entity_definition( const char *name, ivec2 scale, Texture *texture );
 
 #endif

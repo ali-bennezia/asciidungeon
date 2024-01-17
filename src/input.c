@@ -147,7 +147,9 @@ void asciidng_init_input()
 	asciidng_register_input( "Forward", ASCIIDNG_KEY_W );
 	asciidng_register_input( "Backward", ASCIIDNG_KEY_S );
 	asciidng_register_input( "Rightward", ASCIIDNG_KEY_D );	
-	asciidng_register_input( "Leftward", ASCIIDNG_KEY_A );	
+	asciidng_register_input( "Leftward", ASCIIDNG_KEY_A );
+	asciidng_register_input( "Jump", ASCIIDNG_KEY_SPACE );
+	asciidng_register_input( "Crouch", ASCIIDNG_KEY_SHIFT );	
 }
 
 int asciidng_is_input_registered( char *identifier )
@@ -251,7 +253,7 @@ int asciidng_hide_mouse()
 	#ifdef WINMODE
 
 	RECT rect;
-	
+
 	GetClientRect( g_h_console, &rect );
 	ClientToScreen( g_h_console, ( POINT* ) &rect.left ); 
 	ClientToScreen( g_h_console, ( POINT* ) &rect.right );
