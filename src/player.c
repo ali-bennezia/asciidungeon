@@ -56,6 +56,11 @@ void asciidng_terminate_player()
 	asciidng_unregister_mouse_event_listener( player_mouse_event_listener );
 }
 
+boolval asciidng_get_movement_enabled()
+{
+	return g_movement_enabled;
+}
+
 void asciidng_set_movement_enabled( boolval val )
 {
 	g_movement_enabled = val;

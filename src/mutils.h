@@ -31,13 +31,29 @@ typedef float fmat4[4*4];
 
 float fvec2_dot( fvec2 vec1, fvec2 vec2 );
 float fvec3_dot( fvec3 vec1, fvec3 vec2 );
+float fvec4_dot( fvec4 vec1, fvec4 vec2 );
 
 fvec2 fmat2_get_row( fmat2 mat, int i );
 fvec2 fmat2_get_column( fmat2 mat, int i );
+fvec3 fmat3_get_row( fmat3 mat, int i );
+fvec3 fmat3_get_column( fmat3 mat, int i );
+fvec4 fmat4_get_row( fmat4 mat, int i );
+fvec4 fmat4_get_column( fmat4 mat, int i );
 
 void fmat2_set( fmat2 mat, float val, int i, int j );
+void fmat3_set( fmat3 mat, float val, int i, int j );
+void fmat4_set( fmat4 mat, float val, int i, int j );
+
 void fmat2_cpy( fmat2 dest, fmat2 source );
+void fmat3_cpy( fmat3 dest, fmat3 source );
+void fmat4_cpy( fmat4 dest, fmat4 source );
+
 void fmat2_mult( fmat2 mat1, fmat2 mat2, fmat2 out );
+void fmat3_mult( fmat3 mat1, fmat3 mat2, fmat3 out );
+void fmat4_mult( fmat4 mat1, fmat4 mat2, fmat4 out );
+
 fvec2 fmat2_fvec2_mult( fmat2 mat1, fvec2 vec2 );
+fvec3 fmat3_fvec3_mult( fmat3 mat1, fvec3 vec2 );
+fvec4 fmat4_fvec4_mult( fmat4 mat1, fvec4 vec2 );
 
 #endif

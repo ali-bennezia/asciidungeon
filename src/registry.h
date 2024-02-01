@@ -39,4 +39,6 @@ int asciidng_register_prop_definition( const char *name, fvec3 scale, Mesh *mesh
 EntityDefinition* asciidng_get_entity_definition( const char *name );
 int asciidng_register_entity_definition( const char *name, ivec2 scale, Texture *texture );
 
+Mesh *asciidng_get_entity_mesh();
+
 #endif

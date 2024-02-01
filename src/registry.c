@@ -4,11 +4,12 @@
 
 static DynamicArray tile_definitions, prop_definitions, entity_definitions;
 
-static Mesh *g_default_cube_mesh = NULL;
+static Mesh *g_default_cube_mesh = NULL, *g_default_quad_mesh;
 
 void asciidng_init_registry()
 {
-	g_default_cube_mesh = load_mesh( "assets/tiles/default_cube.obj" );
+	g_default_cube_mesh = load_mesh( "assets/models/default_cube.obj" );
+	g_default_quad_mesh = load_mesh( "assets/models/default_quad.obj" );
 
 	tile_definitions = gen_dynamic_array( sizeof( TileDefinition ) );
 	prop_definitions = gen_dynamic_array( sizeof( PropDefinition ) );
@@ -21,6 +22,7 @@ void asciidng_terminate_registry()
 	free_dynamic_array( &prop_definitions );
 	free_dynamic_array( &entity_definitions );
 
+	free_mesh( g_default_quad_mesh );
 	free_mesh( g_default_cube_mesh );
 }
 
@@ -81,7 +83,7 @@ int asciidng_register_prop_definition( const char *name, fvec3 scale,  Mesh *mes
 	PropDefinition def = {
 		def_name,
 		scale,
-		mesh,
+		mesh == NULL ? g_default_cube_mesh : mesh,
 		texture
 	};
 	insert_data( &prop_definitions, &def, sizeof( PropDefinition ) );
@@ -104,4 +106,9 @@ int asciidng_register_entity_definition( const char *name, ivec2 scale, Texture 
 	insert_data( &entity_definitions, &def, sizeof( EntityDefinition ) );
 
 	return 0;
+}
+
+Mesh *asciidng_get_entity_mesh()
+{
+	return g_default_quad_mesh;
 }

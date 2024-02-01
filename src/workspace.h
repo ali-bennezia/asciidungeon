@@ -24,6 +24,15 @@ typedef struct EntityInstance {
 void asciidng_init_workspace();
 void asciidng_terminate_workspace();
 
+void asciidng_clear_workspace();
+
 TileInstance *gen_tile( const char *tile_name, int x, int y, int z );
+void remove_tile( TileInstance *instance );
+
+PropInstance *gen_prop( const char *prop_name, float x, float y, float z );
+void remove_prop( PropInstance *instance );
+
+EntityInstance *gen_entity( const char *entity_name, float x, float y, float z );
+void remove_entity( EntityInstance *instance );
 
 #endif
