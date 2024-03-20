@@ -71,13 +71,13 @@ static void init()
 	// debug
 	asciidng_register_tile_definition( "test_tile", NULL, NULL );
 	ivec3 coords = {0, 0, 15};
-	TileInstance *instance = gen_tile( "test_tile", 0, 0, 15 );
-	gen_tile( "test_tile", 0, -1, 14 );
-	gen_tile( "test_tile", 0, -1, 13 );
-	gen_tile( "test_tile", 0, -1, 12 );
-	gen_tile( "test_tile", 0, -1, 2 );
-	gen_tile( "test_tile", 0, -1, 1 );
-	gen_tile( "test_tile", 0, -1, 0 );
+	TileInstance *instance = asciidng_gen_tile( "test_tile", 0, 0, 15 );
+	asciidng_gen_tile( "test_tile", 0, -1, 14 );
+	asciidng_gen_tile( "test_tile", 0, -1, 13 );
+	asciidng_gen_tile( "test_tile", 0, -1, 12 );
+	asciidng_gen_tile( "test_tile", 0, -1, 2 );
+	asciidng_gen_tile( "test_tile", 0, -1, 1 );
+	asciidng_gen_tile( "test_tile", 0, -1, 0 );
 	asciidng_hide_mouse();
 }
 

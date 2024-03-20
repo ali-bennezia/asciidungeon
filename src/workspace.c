@@ -14,10 +14,10 @@ void asciidng_init_workspace()
 	props = gen_dynamic_array( sizeof( PropInstance ) );
 	entities = gen_dynamic_array( sizeof( EntityInstance ) );
 
-	buttons = gen_dynamic_array( sizeof( UIButton* ) );
-	images = gen_dynamic_array( sizeof( UIImage* ) ); 
-	frames = gen_dynamic_array( sizeof( UIFrame* ) );
-	texts = gen_dynamic_array( sizeof( UIText* ) );
+	buttons = gen_dynamic_array( sizeof( UIButtonInstance ) );
+	images = gen_dynamic_array( sizeof( UIImageInstance ) ); 
+	frames = gen_dynamic_array( sizeof( UIFrameInstance ) );
+	texts = gen_dynamic_array( sizeof( UITextInstance ) );
 }
 
 void asciidng_terminate_workspace()
@@ -32,14 +32,50 @@ void asciidng_terminate_workspace()
 	free_dynamic_array( &entities );
 }
 
+static unsigned int clear_mode = 0;
+static void dynarr_clear_fun( void *data )
+{
+	switch ( clear_mode ){
+		case 0:
+			free_ui_text( ( ( UITextInstance* ) data )->ui_txt );
+			break;
+		case 1:
+			free_ui_frame( ( ( UIFrameInstance* ) data )->ui_frame );
+			break;
+		case 2:
+			free_ui_image( ( ( UIImageInstance* ) data )->ui_image );
+			break;	
+		case 3:
+			UIButtonInstance *case_3_instance = ( UIButtonInstance* ) data; 	
+			free_ui_text( case_3_instance->ui_txt );
+			free_ui_frame( case_3_instance->ui_frame );
+			break;
+		case 4:
+			asciidng_remove_tile( ( TileInstance* ) data );
+			break;
+		case 5:
+			asciidng_remove_prop( ( PropInstance* ) data );
+			break;
+		case 6:
+			asciidng_remove_entity( ( EntityInstance* ) data );
+			break;
+		// TODO 	
+	}
+}
+
 void asciidng_clear_workspace()
 {
+	clear_dynamic_array( &texts, sizeof( UITextInstance ) );
+	clear_dynamic_array( &frames, sizeof( UIFrameInstance ) );
+	clear_dynamic_array( &images, sizeof( UIImageInstance ) );
+	clear_dynamic_array( &buttons, sizeof( UIButtonInstance ) );
+
 	clear_dynamic_array( &tiles, sizeof( TileInstance ) );
 	clear_dynamic_array( &props, sizeof( PropInstance ) );
 	clear_dynamic_array( &entities, sizeof( EntityInstance ) );
 }
 
-TileInstance *gen_tile( const char *tile_name, int x, int y, int z )
+TileInstance *asciidng_gen_tile( const char *tile_name, int x, int y, int z )
 {
 	TileDefinition *def = asciidng_get_tile_definition( tile_name );	
 
@@ -55,6 +91,7 @@ TileInstance *gen_tile( const char *tile_name, int x, int y, int z )
 	model->position = position;
 
 	TileInstance instance = {
+		def,
 		model,
 		coords
 	};
@@ -62,7 +99,7 @@ TileInstance *gen_tile( const char *tile_name, int x, int y, int z )
 	return insert_data( &tiles, &instance, sizeof( TileInstance ) );
 }
 
-void remove_tile( TileInstance *instance )
+void asciidng_remove_tile( TileInstance *instance )
 {
 	if ( instance == NULL ) return;
 
@@ -77,7 +114,7 @@ void remove_tile( TileInstance *instance )
 	remove_data( &tiles, i, sizeof( TileInstance ) );
 }
 
-PropInstance *gen_prop( const char *prop_name, float x, float y, float z )
+PropInstance *asciidng_gen_prop( const char *prop_name, float x, float y, float z )
 {
 	PropDefinition *def = asciidng_get_prop_definition( prop_name );	
 
@@ -93,6 +130,7 @@ PropInstance *gen_prop( const char *prop_name, float x, float y, float z )
 	model->position = position;
 
 	PropInstance instance = {
+		def,
 		model,
 		fpos
 	};
@@ -100,7 +138,7 @@ PropInstance *gen_prop( const char *prop_name, float x, float y, float z )
 	return insert_data( &props, &instance, sizeof( PropInstance ) );
 }
 
-void remove_prop( PropInstance *instance )
+void asciidng_remove_prop( PropInstance *instance )
 {
 	if ( instance == NULL ) return;
 
@@ -115,7 +153,7 @@ void remove_prop( PropInstance *instance )
 	remove_data( &props, i, sizeof( PropInstance ) );
 }
 
-EntityInstance *gen_entity( const char *entity_name, float x, float y, float z )
+EntityInstance *asciidng_gen_entity( const char *entity_name, float x, float y, float z )
 {
 	EntityDefinition *def = asciidng_get_entity_definition( entity_name );	
 
@@ -131,6 +169,7 @@ EntityInstance *gen_entity( const char *entity_name, float x, float y, float z )
 	model->position = position;
 
 	EntityInstance instance = {
+		def,
 		model,
 		fpos
 	};
@@ -138,7 +177,7 @@ EntityInstance *gen_entity( const char *entity_name, float x, float y, float z )
 	return insert_data( &entities, &instance, sizeof( EntityInstance ) );
 }
 
-void remove_entity( EntityInstance *instance )
+void asciidng_remove_entity( EntityInstance *instance )
 {
 	if ( instance == NULL ) return;
 
@@ -153,3 +192,32 @@ void remove_entity( EntityInstance *instance )
 	remove_data( &entities, i, sizeof( EntityInstance ) );
 }
 
+UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, unsigned int size_y, char *text, int layer )
+{
+	IntVec2 btn_pos = { x, y }, btn_size = { size_x, size_y };
+	RGB btn_col = { 255, 255, 255 };
+	UIText *btn_txt = gen_ui_text( text, btn_pos, btn_col, layer );
+
+	UIFrame *btn_frame = gen_ui_frame( btn_pos, btn_size, btn_col, layer );	
+
+	UIButtonInstance instance = {
+		btn_txt,
+		btn_frame,
+	};
+
+	return insert_data( &buttons, &instance, sizeof( UIButtonInstance) ); 
+}
+
+void asciidng_remove_ui_button( UIButtonInstance *instance )
+{
+	if ( instance == NULL ) return;
+
+	UIText *txt = instance->ui_txt; 	
+	UIFrame *frame = instance->ui_frame; 
+
+	free_ui_text( txt );
+	free_ui_frame( frame );
+
+	size_t i = instance - ( ( UIButtonInstance* ) buttons.buffer );
+	remove_data( &buttons, i, sizeof( UIButtonInstance ) );	
+}
