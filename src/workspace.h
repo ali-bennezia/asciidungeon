@@ -6,6 +6,9 @@
 struct Model;
 typedef struct Model Model;
 
+struct Texture;
+typedef struct Texture Texture;
+
 struct TileDefinition;
 typedef struct TileDefinition TileDefinition;
 
@@ -61,5 +64,14 @@ void asciidng_remove_entity( EntityInstance *instance );
 
 UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, unsigned int size_y, char *text, int layer );
 void asciidng_remove_ui_button( UIButtonInstance *instance );
+
+UIImageInstance *asciidng_gen_ui_image( int x, int y, unsigned int size_x, unsigned int size_y, Texture *texture, int layer );
+void asciidng_remove_ui_image( UIImageInstance *instance );
+
+UIFrameInstance *asciidng_gen_ui_frame( int x, int y, unsigned int size_x, unsigned int size_y, int layer );
+void asciidng_remove_ui_frame( UIFrameInstance *instance );
+
+UITextInstance *asciidng_gen_ui_text( int x, int y, char *text, int layer );
+void asciidng_remove_ui_text( UITextInstance *instance );
 
 #endif

@@ -205,7 +205,7 @@ UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, uns
 		btn_frame,
 	};
 
-	return insert_data( &buttons, &instance, sizeof( UIButtonInstance) ); 
+	return insert_data( &buttons, &instance, sizeof( UIButtonInstance ) ); 
 }
 
 void asciidng_remove_ui_button( UIButtonInstance *instance )
@@ -220,4 +220,82 @@ void asciidng_remove_ui_button( UIButtonInstance *instance )
 
 	size_t i = instance - ( ( UIButtonInstance* ) buttons.buffer );
 	remove_data( &buttons, i, sizeof( UIButtonInstance ) );	
+}
+
+UIImageInstance *asciidng_gen_ui_image( int x, int y, unsigned int size_x, unsigned int size_y, Texture *texture, int layer )
+{
+	IntVec2 pos = { x,  y }, size = { size_x, size_y };
+	RGB col = { 255, 255, 255 };
+
+	UIImage *img = gen_ui_image( pos, size, col, layer, texture );
+
+	UIImageInstance instance = {
+		img		
+	};
+
+	return insert_data( &images, &instance, sizeof( UIImageInstance ) );
+}
+
+void asciidng_remove_ui_image( UIImageInstance *instance )
+{
+	if ( instance == NULL ) return;
+
+	UIImage *img = instance->ui_image;
+
+	free_ui_image( img );
+
+	size_t i = instance - ( ( UIImageInstance* ) images.buffer );
+	remove_data( &images, i, sizeof( UIImageInstance ) );	
+}
+
+UIFrameInstance *asciidng_gen_ui_frame( int x, int y, unsigned int size_x, unsigned int size_y, int layer )
+{
+	IntVec2 pos = { x,  y }, size = { size_x, size_y };
+	RGB col = { 255, 255, 255 };
+
+	UIFrame *frame = gen_ui_frame( pos, size, col, layer );
+
+	UIFrameInstance instance = {
+		frame
+	};
+
+	return insert_data( &frames, &instance, sizeof( UIFrameInstance ) );
+}
+
+void asciidng_remove_ui_frame( UIFrameInstance *instance )
+{
+	if ( instance == NULL ) return;
+
+	UIFrame *frame = instance->ui_frame;
+
+	free_ui_frame( frame );
+
+	size_t i = instance - ( ( UIFrameInstance* ) frames.buffer );
+	remove_data( &frames, i, sizeof( UIFrameInstance ) );
+}
+
+UITextInstance *asciidng_gen_ui_text( int x, int y, char *text, int layer )
+{
+	IntVec2 pos = { x,  y };
+	RGB col = { 255, 255, 255 };
+
+	UIText *ui_text = gen_ui_text( text, pos, col, layer );
+
+	UITextInstance instance = {
+		ui_text
+	};
+
+	return insert_data( &texts, &instance, sizeof( UITextInstance ) );
+}
+
+void asciidng_remove_ui_text( UITextInstance *instance )
+{
+	if ( instance == NULL ) return;
+
+	UIText *text = instance->ui_txt;
+
+	free_ui_text( text );
+
+	size_t i = instance - ( ( UITextInstance* ) texts.buffer );
+	remove_data( &texts, i, sizeof( UITextInstance ) );
 }
