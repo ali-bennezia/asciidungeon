@@ -55,23 +55,34 @@ void asciidng_clear_workspace();
 
 TileInstance *asciidng_gen_tile( const char *tile_name, int x, int y, int z );
 void asciidng_remove_tile( TileInstance *instance );
+void asciidng_clear_tiles();
 
 PropInstance *asciidng_gen_prop( const char *prop_name, float x, float y, float z );
 void asciidng_remove_prop( PropInstance *instance );
+void asciidng_clear_props();
 
 EntityInstance *asciidng_gen_entity( const char *entity_name, float x, float y, float z );
 void asciidng_remove_entity( EntityInstance *instance );
+void asciidng_clear_entities();
 
 UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, unsigned int size_y, char *text, int layer );
 void asciidng_remove_ui_button( UIButtonInstance *instance );
+void asciidng_clear_ui_buttons();
 
 UIImageInstance *asciidng_gen_ui_image( int x, int y, unsigned int size_x, unsigned int size_y, Texture *texture, int layer );
 void asciidng_remove_ui_image( UIImageInstance *instance );
+void asciidng_clear_ui_images();
 
 UIFrameInstance *asciidng_gen_ui_frame( int x, int y, unsigned int size_x, unsigned int size_y, int layer );
 void asciidng_remove_ui_frame( UIFrameInstance *instance );
+void asciidng_clear_ui_frames();
 
 UITextInstance *asciidng_gen_ui_text( int x, int y, char *text, int layer );
 void asciidng_remove_ui_text( UITextInstance *instance );
+void asciidng_clear_ui_texts();
+
+void asciidng_clear_objects();
+void asciidng_clear_ui();
+void asciidng_clear_workspace();
 
 #endif

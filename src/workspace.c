@@ -3,6 +3,7 @@
 #include <asciigl.h>
 
 #include "ui.h"
+#include "utils.h"
 #include "registry.h"
 
 static DynamicArray tiles, props, entities;
@@ -37,18 +38,16 @@ static void dynarr_clear_fun( void *data )
 {
 	switch ( clear_mode ){
 		case 0:
-			free_ui_text( ( ( UITextInstance* ) data )->ui_txt );
+			asciidng_remove_ui_text( ( UITextInstance* ) data );
 			break;
 		case 1:
-			free_ui_frame( ( ( UIFrameInstance* ) data )->ui_frame );
+			asciidng_remove_ui_frame( ( UIFrameInstance* ) data );
 			break;
 		case 2:
-			free_ui_image( ( ( UIImageInstance* ) data )->ui_image );
+			asciidng_remove_ui_image( ( UIImageInstance* ) data );
 			break;	
 		case 3:
-			UIButtonInstance *case_3_instance = ( UIButtonInstance* ) data; 	
-			free_ui_text( case_3_instance->ui_txt );
-			free_ui_frame( case_3_instance->ui_frame );
+			asciidng_remove_ui_button( ( UIButtonInstance* ) data );
 			break;
 		case 4:
 			asciidng_remove_tile( ( TileInstance* ) data );
@@ -59,7 +58,6 @@ static void dynarr_clear_fun( void *data )
 		case 6:
 			asciidng_remove_entity( ( EntityInstance* ) data );
 			break;
-		// TODO 	
 	}
 }
 
@@ -114,6 +112,13 @@ void asciidng_remove_tile( TileInstance *instance )
 	remove_data( &tiles, i, sizeof( TileInstance ) );
 }
 
+void asciidng_clear_tiles()
+{
+	clear_mode = 4;
+	foreach_dynarr( &tiles, sizeof( TileInstance ), dynarr_clear_fun );
+	clear_dynamic_array( &tiles, sizeof( TileInstance ) );	
+}
+
 PropInstance *asciidng_gen_prop( const char *prop_name, float x, float y, float z )
 {
 	PropDefinition *def = asciidng_get_prop_definition( prop_name );	
@@ -151,6 +156,13 @@ void asciidng_remove_prop( PropInstance *instance )
 
 	size_t i = instance - ( ( PropInstance* ) props.buffer );
 	remove_data( &props, i, sizeof( PropInstance ) );
+}
+
+void asciidng_clear_props()
+{
+	clear_mode = 5;
+	foreach_dynarr( &props, sizeof( PropInstance ), dynarr_clear_fun );
+	clear_dynamic_array( &props, sizeof( PropInstance ) );	
 }
 
 EntityInstance *asciidng_gen_entity( const char *entity_name, float x, float y, float z )
@@ -192,6 +204,13 @@ void asciidng_remove_entity( EntityInstance *instance )
 	remove_data( &entities, i, sizeof( EntityInstance ) );
 }
 
+void asciidng_clear_entities()
+{
+	clear_mode = 6;
+	foreach_dynarr( &entities, sizeof( EntityInstance ), dynarr_clear_fun );
+	clear_dynamic_array( &entities, sizeof( EntityInstance ) );	
+}
+
 UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, unsigned int size_y, char *text, int layer )
 {
 	IntVec2 btn_pos = { x, y }, btn_size = { size_x, size_y };
@@ -222,6 +241,13 @@ void asciidng_remove_ui_button( UIButtonInstance *instance )
 	remove_data( &buttons, i, sizeof( UIButtonInstance ) );	
 }
 
+void asciidng_clear_ui_buttons()
+{
+	clear_mode = 3;
+	foreach_dynarr( &buttons, sizeof( UIButtonInstance ), dynarr_clear_fun );
+	clear_dynamic_array( &buttons, sizeof( UIButtonInstance ) );	
+}
+
 UIImageInstance *asciidng_gen_ui_image( int x, int y, unsigned int size_x, unsigned int size_y, Texture *texture, int layer )
 {
 	IntVec2 pos = { x,  y }, size = { size_x, size_y };
@@ -246,6 +272,13 @@ void asciidng_remove_ui_image( UIImageInstance *instance )
 
 	size_t i = instance - ( ( UIImageInstance* ) images.buffer );
 	remove_data( &images, i, sizeof( UIImageInstance ) );	
+}
+
+void asciidng_clear_ui_images()
+{
+	clear_mode = 2;
+	foreach_dynarr( &images, sizeof( UIImageInstance ), dynarr_clear_fun );
+	clear_dynamic_array( &images, sizeof( UIImageInstance ) );	
 }
 
 UIFrameInstance *asciidng_gen_ui_frame( int x, int y, unsigned int size_x, unsigned int size_y, int layer )
@@ -274,6 +307,13 @@ void asciidng_remove_ui_frame( UIFrameInstance *instance )
 	remove_data( &frames, i, sizeof( UIFrameInstance ) );
 }
 
+void asciidng_clear_ui_frames()
+{
+	clear_mode = 1;
+	foreach_dynarr( &frames, sizeof( UIFrameInstance ), dynarr_clear_fun );
+	clear_dynamic_array( &frames, sizeof( UIFrameInstance ) );	
+}
+
 UITextInstance *asciidng_gen_ui_text( int x, int y, char *text, int layer )
 {
 	IntVec2 pos = { x,  y };
@@ -298,4 +338,31 @@ void asciidng_remove_ui_text( UITextInstance *instance )
 
 	size_t i = instance - ( ( UITextInstance* ) texts.buffer );
 	remove_data( &texts, i, sizeof( UITextInstance ) );
+}
+
+void asciidng_clear_ui_texts()
+{
+	clear_mode = 0;
+	foreach_dynarr( &texts, sizeof( UITextInstance ), dynarr_clear_fun );
+	clear_dynamic_array( &texts, sizeof( UITextInstance ) );	
+}
+
+void asciidng_clear_objects()
+{
+	asciidng_clear_tiles();
+	asciidng_clear_props();
+	asciidng_clear_entities();
+}
+
+void asciidng_clear_ui()
+{
+	asciidng_clear_buttons();
+	asciidng_clear_images();
+	asciidng_clear_texts();
+}
+
+void asciidng_clear_workspace()
+{
+	asciidng_clear_objects();
+	asciidng_clear_ui();
 }
