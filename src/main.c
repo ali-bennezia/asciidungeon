@@ -25,11 +25,12 @@
 
 boolval g_running = true;
 
-
 static void terminate()
 {
+	asciidng_show_mouse();
 	g_running = false;
 	asciidng_terminate_player();
+	asciidng_terminate_ui();
 	asciidng_terminate_input();
 	asciidng_terminate_workspace();
 	asciidng_terminate_registry();
@@ -46,6 +47,7 @@ static void init()
 	asciidng_init_registry();
 	asciidng_init_workspace();
 	asciidng_init_input();
+	asciidng_init_ui();
 	asciidng_init_player();
 
 	atexit( terminate );
@@ -65,20 +67,17 @@ static void init()
 	Vec3 dir = { -10, -5, -10 };
 	dir = vec3_normalize( dir );
 
-	add_ambient_light( "Ambient light", 55, white );
-	add_directional_light( "Directional light", 100, dir, white );
+	add_ambient_light( "Ambient light", 100, white );
+	add_directional_light( "Directional light", 50, dir, white );
 
 	// debug
 	asciidng_register_tile_definition( "test_tile", NULL, NULL );
-	ivec3 coords = {0, 0, 15};
-	TileInstance *instance = asciidng_gen_tile( "test_tile", 0, 0, 15 );
-	asciidng_gen_tile( "test_tile", 0, -1, 14 );
-	asciidng_gen_tile( "test_tile", 0, -1, 13 );
-	asciidng_gen_tile( "test_tile", 0, -1, 12 );
-	asciidng_gen_tile( "test_tile", 0, -1, 2 );
-	asciidng_gen_tile( "test_tile", 0, -1, 1 );
-	asciidng_gen_tile( "test_tile", 0, -1, 0 );
+
+	asciidng_set_movement_enabled( true );
 	asciidng_hide_mouse();
+
+	asciidng_gen_tile( "test_tile", 0, 0, -5 );
+	asciidng_gen_tile( "test_tile", 0, 0, 5 );
 }
 
 static void loop()
@@ -86,8 +85,8 @@ static void loop()
 	while (g_running)
 	{
 		asciidng_poll_input();
-		asciigl_process_frame();
 		asciidng_player_loop();
+		asciigl_process_frame();
 	}
 }
 

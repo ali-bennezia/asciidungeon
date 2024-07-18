@@ -8,8 +8,8 @@ static Mesh *g_default_cube_mesh = NULL, *g_default_quad_mesh;
 
 void asciidng_init_registry()
 {
-	g_default_cube_mesh = load_mesh( "assets/models/default_cube.obj" );
-	g_default_quad_mesh = load_mesh( "assets/models/default_quad.obj" );
+	g_default_cube_mesh = load_mesh( "assets/tiles/models/default_cube.obj" );
+	g_default_quad_mesh = load_mesh( "assets/entities/models/default_quad.obj" );
 
 	tile_definitions = gen_dynamic_array( sizeof( TileDefinition ) );
 	prop_definitions = gen_dynamic_array( sizeof( PropDefinition ) );

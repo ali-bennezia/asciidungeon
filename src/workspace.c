@@ -61,18 +61,6 @@ static void dynarr_clear_fun( void *data )
 	}
 }
 
-void asciidng_clear_workspace()
-{
-	clear_dynamic_array( &texts, sizeof( UITextInstance ) );
-	clear_dynamic_array( &frames, sizeof( UIFrameInstance ) );
-	clear_dynamic_array( &images, sizeof( UIImageInstance ) );
-	clear_dynamic_array( &buttons, sizeof( UIButtonInstance ) );
-
-	clear_dynamic_array( &tiles, sizeof( TileInstance ) );
-	clear_dynamic_array( &props, sizeof( PropInstance ) );
-	clear_dynamic_array( &entities, sizeof( EntityInstance ) );
-}
-
 TileInstance *asciidng_gen_tile( const char *tile_name, int x, int y, int z )
 {
 	TileDefinition *def = asciidng_get_tile_definition( tile_name );	
@@ -248,6 +236,17 @@ void asciidng_clear_ui_buttons()
 	clear_dynamic_array( &buttons, sizeof( UIButtonInstance ) );	
 }
 
+unsigned int asciidng_get_ui_buttons_count()
+{
+	return buttons.usage;
+}
+
+UIButtonInstance *asciidng_ui_button_at( unsigned int index )
+{
+	if ( index >= buttons.usage ) return NULL;
+	return ( UIButtonInstance* ) buttons.buffer + index;
+}
+
 UIImageInstance *asciidng_gen_ui_image( int x, int y, unsigned int size_x, unsigned int size_y, Texture *texture, int layer )
 {
 	IntVec2 pos = { x,  y }, size = { size_x, size_y };
@@ -279,6 +278,17 @@ void asciidng_clear_ui_images()
 	clear_mode = 2;
 	foreach_dynarr( &images, sizeof( UIImageInstance ), dynarr_clear_fun );
 	clear_dynamic_array( &images, sizeof( UIImageInstance ) );	
+}
+
+unsigned int asciidng_get_ui_images_count()
+{
+	return images.usage;
+}
+
+UIImageInstance *asciidng_ui_image_at( unsigned int index )
+{
+	if ( index >= images.usage ) return NULL;
+	return ( UIImageInstance* ) images.buffer + index;
 }
 
 UIFrameInstance *asciidng_gen_ui_frame( int x, int y, unsigned int size_x, unsigned int size_y, int layer )
@@ -314,6 +324,17 @@ void asciidng_clear_ui_frames()
 	clear_dynamic_array( &frames, sizeof( UIFrameInstance ) );	
 }
 
+unsigned int asciidng_get_ui_frames_count()
+{
+	return frames.usage;
+}
+
+UIFrameInstance *asciidng_ui_frame_at( unsigned int index )
+{
+	if ( index >= frames.usage ) return NULL;
+	return ( UIFrameInstance* ) frames.buffer + index;
+}
+
 UITextInstance *asciidng_gen_ui_text( int x, int y, char *text, int layer )
 {
 	IntVec2 pos = { x,  y };
@@ -347,6 +368,17 @@ void asciidng_clear_ui_texts()
 	clear_dynamic_array( &texts, sizeof( UITextInstance ) );	
 }
 
+unsigned int asciidng_get_ui_texts_count()
+{
+	return texts.usage;
+}
+
+UITextInstance *asciidng_ui_text_at( unsigned int index )
+{
+	if ( index >= texts.usage ) return NULL;
+	return ( UITextInstance* ) texts.buffer + index;
+}
+
 void asciidng_clear_objects()
 {
 	asciidng_clear_tiles();
@@ -356,9 +388,9 @@ void asciidng_clear_objects()
 
 void asciidng_clear_ui()
 {
-	asciidng_clear_buttons();
-	asciidng_clear_images();
-	asciidng_clear_texts();
+	asciidng_clear_ui_buttons();
+	asciidng_clear_ui_images();
+	asciidng_clear_ui_texts();
 }
 
 void asciidng_clear_workspace()

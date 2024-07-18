@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <math.h>
 
 float fvec2_dot( fvec2 vec1, fvec2 vec2 )
 {
@@ -95,6 +96,78 @@ void fmat4_set( fmat4 mat, float val, int i, int j )
 {
 	const size_t mat_size = 4;
 	mat[ i * mat_size + j ] = val;
+}
+
+void fmat2_fill( fmat2 mat, float val )
+{
+	const size_t mat_size = 2;
+	for ( size_t i = 0; i < mat_size*mat_size; ++i )
+	{
+		mat[ i ] = val;
+	}
+}
+
+void fmat3_fill( fmat3 mat, float val )
+{
+	const size_t mat_size = 3;
+	for ( size_t i = 0; i < mat_size*mat_size; ++i )
+	{
+		mat[ i ] = val;
+	}
+}
+
+void fmat4_fill( fmat4 mat, float val )
+{
+	const size_t mat_size = 4;
+	for ( size_t i = 0; i < mat_size*mat_size; ++i )
+	{
+		mat[ i ] = val;
+	}
+}
+
+void fmat2_identity( fmat2 out )
+{
+	fmat2_fill( out, 0 );
+	const size_t mat_size = 2;
+	for ( size_t i = 0; i < mat_size; ++i )
+	{
+		fmat2_set( out, 1, i, i );
+	}
+}
+
+void fmat3_identity( fmat3 out )
+{
+	fmat3_fill( out, 0 );
+	const size_t mat_size = 3;
+	for ( size_t i = 0; i < mat_size; ++i )
+	{
+		fmat3_set( out, 1, i, i );
+	}
+}
+
+void fmat4_identity( fmat4 out )
+{
+	fmat4_fill( out, 0 );
+	const size_t mat_size = 4;
+	for ( size_t i = 0; i < mat_size; ++i )
+	{
+		fmat4_set( out, 1, i, i );
+	}
+}
+
+void fmat2_zero( fmat2 out )
+{
+	fmat2_fill( out, 0 );
+}
+
+void fmat3_zero( fmat3 out )
+{
+	fmat3_fill( out, 0 );
+}
+
+void fmat4_zero( fmat4 out )
+{
+	fmat4_fill( out, 0 );
 }
 
 void fmat2_cpy( fmat2 dest, fmat2 source )
@@ -194,7 +267,7 @@ fvec3 fmat3_fvec3_mult( fmat3 mat1, fvec3 vec )
 	return result;
 }
 
-fvec4 fmat4_fvec3_mult( fmat4 mat1, fvec4 vec )
+fvec4 fmat4_fvec4_mult( fmat4 mat1, fvec4 vec )
 {
 	const size_t mat_size = 4;
 	float data[ mat_size ];
@@ -212,4 +285,109 @@ fvec4 fmat4_fvec3_mult( fmat4 mat1, fvec4 vec )
 		data[ 3 ]
 	};
 	return result;
+}
+
+void fmat2_rotation_matrix( float theta, fmat2 out )
+{
+	fmat2_set( out, cos( theta ), 0, 0 );
+	fmat2_set( out, -sin( theta ), 0, 1 );
+	fmat2_set( out, sin( theta ), 1, 0 );
+	fmat2_set( out, cos( theta ), 1, 1 );	
+}
+
+void fmat3_x_rotation_matrix( float theta, fmat3 out )
+{
+	fmat3_set( out, 0, 0, 0 );
+	fmat3_set( out, 0, 1, 0 );
+	fmat3_set( out, 0, 2, 0 );
+
+	fmat3_set( out, 0, 0, 1 );
+	fmat3_set( out, 0, 0, 2 );
+
+	fmat3_set( out, cos( theta ), 1, 1 );
+	fmat3_set( out, -sin( theta ), 1, 2 );
+	fmat3_set( out, sin( theta ), 2, 1 );
+	fmat3_set( out, cos( theta ), 2, 2 );
+}
+
+void fmat3_y_rotation_matrix( float theta, fmat3 out )
+{
+	fmat3_set( out, 0, 1, 0 );
+
+	fmat3_set( out, 0, 0, 1 );
+	fmat3_set( out, 0, 1, 1 );
+	fmat3_set( out, 0, 2, 1 );
+
+	fmat3_set( out, 0, 1, 2 );
+
+	fmat3_set( out, cos( theta ), 0, 0 );
+	fmat3_set( out, -sin( theta ), 0, 2 );
+	fmat3_set( out, sin( theta ), 2, 0 );
+	fmat3_set( out, cos( theta ), 2, 2 );
+}
+
+void fmat3_z_rotation_matrix( float theta, fmat3 out )
+{
+	fmat3_set( out, 0, 2, 0 );
+
+	fmat3_set( out, 0, 2, 1 );
+
+	fmat3_set( out, 0, 0, 2 );
+	fmat3_set( out, 0, 1, 2 );
+	fmat3_set( out, 0, 2, 2 );
+
+	fmat3_set( out, cos( theta ), 0, 0 );
+	fmat3_set( out, -sin( theta ), 0, 1 );
+	fmat3_set( out, sin( theta ), 1, 0 );
+	fmat3_set( out, cos( theta ), 1, 1 );
+}
+
+void fmat3_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angle_rads, fmat3 out  )
+{
+	fmat3 a, b, c;
+
+	#if EULER_ANGLES_ORDER == X_Y_Z
+
+	fmat3_x_rotation_matrix( x_angle_rads, a );
+	fmat3_y_rotation_matrix( y_angle_rads, b );
+	fmat3_z_rotation_matrix( z_angle_rads, c );
+
+	#elif EULER_ANGLES_ORDER == X_Z_Y
+
+	fmat3_x_rotation_matrix( x_angle_rads, a );
+	fmat3_z_rotation_matrix( z_angle_rads, b );
+	fmat3_y_rotation_matrix( y_angle_rads, c );
+
+	#elif EULER_ANGLES_ORDER == Y_X_Z
+
+	fmat3_y_rotation_matrix( y_angle_rads, a );
+	fmat3_x_rotation_matrix( x_angle_rads, b );
+	fmat3_z_rotation_matrix( z_angle_rads, c );
+
+	#elif EULER_ANGLES_ORDER == Y_Z_X
+
+	fmat3_y_rotation_matrix( y_angle_rads, a );
+	fmat3_z_rotation_matrix( z_angle_rads, b );
+	fmat3_x_rotation_matrix( x_angle_rads, c );
+
+	#elif EULER_ANGLES_ORDER == Z_Y_X
+
+	fmat3_z_rotation_matrix( z_angle_rads, a );
+	fmat3_y_rotation_matrix( y_angle_rads, b );
+	fmat3_x_rotation_matrix( x_angle_rads, c );
+
+	#elif EULER_ANGLES_ORDER == Z_X_Y
+
+	fmat3_z_rotation_matrix( z_angle_rads, a );
+	fmat3_x_rotation_matrix( x_angle_rads, b );
+	fmat3_y_rotation_matrix( y_angle_rads, c );
+
+	#endif
+
+	fmat3 step0, step1, step2;
+	fmat3_zero( step0 );
+
+	fmat3_mult( a, step0, step1 );
+	fmat3_mult( b, step1, step2 );
+	fmat3_mult( c, step2, out );
 }

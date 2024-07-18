@@ -22,4 +22,7 @@ typedef struct UIButtonInstance {
 	UIFrame *ui_frame;
 } UIButtonInstance;
 
+void asciidng_init_ui();
+void asciidng_terminate_ui();
+
 #endif
