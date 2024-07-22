@@ -8,18 +8,33 @@ typedef struct UIFrame UIFrame;
 struct UIImage;
 typedef struct UIImage UIImage;
 
+struct _MouseEvent;
+typedef struct _MouseEvent MouseEvent;
+
+typedef void (*UICallback)(MouseEvent);
+
+typedef struct UICallbacks {
+	UICallback on_mouse_click_callback;
+	UICallback on_mouse_enter_callback;
+	UICallback on_mouse_leave_callback;
+} UICallbacks;
+
 typedef struct UITextInstance {
 	UIText *ui_txt;
+	UICallbacks callbacks;
 } UITextInstance;
 typedef struct UIFrameInstance {
 	UIFrame *ui_frame;
+	UICallbacks callbacks;
 } UIFrameInstance;
 typedef struct UIImageInstance {
 	UIImage *ui_image;
+	UICallbacks callbacks;
 } UIImageInstance;
 typedef struct UIButtonInstance {
 	UIText *ui_txt;
 	UIFrame *ui_frame;
+	UICallbacks callbacks;
 } UIButtonInstance;
 
 void asciidng_init_ui();

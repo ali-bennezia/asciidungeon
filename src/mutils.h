@@ -33,6 +33,10 @@ float fvec2_dot( fvec2 vec1, fvec2 vec2 );
 float fvec3_dot( fvec3 vec1, fvec3 vec2 );
 float fvec4_dot( fvec4 vec1, fvec4 vec2 );
 
+float fvec2_norm( fvec2 vec );
+float fvec3_norm( fvec3 vec );
+float fvec4_norm( fvec4 vec );
+
 fvec2 fmat2_get_row( fmat2 mat, int i );
 fvec2 fmat2_get_column( fmat2 mat, int i );
 fvec3 fmat3_get_row( fmat3 mat, int i );
@@ -67,6 +71,10 @@ void fmat4_mult( fmat4 mat1, fmat4 mat2, fmat4 out );
 fvec2 fmat2_fvec2_mult( fmat2 mat1, fvec2 vec2 );
 fvec3 fmat3_fvec3_mult( fmat3 mat1, fvec3 vec2 );
 fvec4 fmat4_fvec4_mult( fmat4 mat1, fvec4 vec2 );
+
+void fmat3_x_rotation_matrix( float theta, fmat3 out );
+void fmat3_y_rotation_matrix( float theta, fmat3 out );
+void fmat3_z_rotation_matrix( float theta, fmat3 out );
 
 void fmat2_rotation_matrix( float theta, fmat2 out );
 

@@ -207,9 +207,14 @@ UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, uns
 
 	UIFrame *btn_frame = gen_ui_frame( btn_pos, btn_size, btn_col, layer );	
 
+	UICallbacks clbs = {
+		NULL, NULL, NULL
+	};
+
 	UIButtonInstance instance = {
 		btn_txt,
 		btn_frame,
+		clbs
 	};
 
 	return insert_data( &buttons, &instance, sizeof( UIButtonInstance ) ); 
@@ -254,8 +259,13 @@ UIImageInstance *asciidng_gen_ui_image( int x, int y, unsigned int size_x, unsig
 
 	UIImage *img = gen_ui_image( pos, size, col, layer, texture );
 
+	UICallbacks clbs = {
+		NULL, NULL, NULL
+	};
+
 	UIImageInstance instance = {
-		img		
+		img,
+		clbs	
 	};
 
 	return insert_data( &images, &instance, sizeof( UIImageInstance ) );
@@ -298,8 +308,13 @@ UIFrameInstance *asciidng_gen_ui_frame( int x, int y, unsigned int size_x, unsig
 
 	UIFrame *frame = gen_ui_frame( pos, size, col, layer );
 
+	UICallbacks clbs = {
+		NULL, NULL, NULL
+	};
+
 	UIFrameInstance instance = {
-		frame
+		frame,
+		clbs
 	};
 
 	return insert_data( &frames, &instance, sizeof( UIFrameInstance ) );
@@ -342,8 +357,13 @@ UITextInstance *asciidng_gen_ui_text( int x, int y, char *text, int layer )
 
 	UIText *ui_text = gen_ui_text( text, pos, col, layer );
 
+	UICallbacks clbs = {
+		NULL, NULL, NULL
+	};
+
 	UITextInstance instance = {
-		ui_text
+		ui_text,
+		clbs
 	};
 
 	return insert_data( &texts, &instance, sizeof( UITextInstance ) );

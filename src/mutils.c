@@ -19,6 +19,20 @@ float fvec4_dot( fvec4 vec1, fvec4 vec2 )
 	return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z + vec1.u * vec2.u;
 }
 
+float fvec2_norm( fvec2 vec )
+{
+	return sqrt( pow( vec.x, 2 ) + pow( vec.y, 2 ) );
+}
+
+float fvec3_norm( fvec3 vec )
+{
+	return sqrt( pow( vec.x, 2 ) + pow( vec.y, 2 ) + pow( vec.z, 2 ) );
+}
+
+float fvec4_norm( fvec4 vec )
+{
+	return sqrt( pow( vec.x, 2 ) + pow( vec.y, 2 ) + pow( vec.z, 2 ) + pow( vec.u, 2 ) );
+}
 
 fvec2 fmat2_get_row( fmat2 mat, int i )
 {
@@ -342,7 +356,7 @@ void fmat3_z_rotation_matrix( float theta, fmat3 out )
 	fmat3_set( out, cos( theta ), 1, 1 );
 }
 
-void fmat3_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angle_rads, fmat3 out  )
+void fmat3_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angle_rads, fmat3 out )
 {
 	fmat3 a, b, c;
 

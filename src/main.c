@@ -78,6 +78,8 @@ static void init()
 
 	asciidng_gen_tile( "test_tile", 0, 0, -5 );
 	asciidng_gen_tile( "test_tile", 0, 0, 5 );
+
+	asciidng_gen_ui_frame( 0, 0, 10, 10, 0 );
 }
 
 static void loop()
