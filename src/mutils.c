@@ -220,6 +220,51 @@ fvec4 fvec4_project_to( fvec4 vec, fcoordsys4 coordsys )
 	);
 }
 
+fvec2 fvec2_project_from_to( fvec2 vec, fcoordsys2 from, fcoordsys2 to )
+{
+	fvec2 pt = fvec2_add(
+		fvec2_add( 
+			from.origin,
+			fvec2_multiply( from.x_axis, vec.x )
+		),
+		fvec2_multiply( from.y_axis, vec.y )
+	);
+	return fvec2_project_to( pt, to );
+}
+
+fvec3 fvec3_project_from_to( fvec3 vec, fcoordsys3 from, fcoordsys3 to )
+{
+	fvec3 pt = fvec3_add(
+		fvec3_add(
+			fvec3_add( 
+				from.origin,
+				fvec3_multiply( from.x_axis, vec.x )
+			),
+			fvec3_multiply( from.y_axis, vec.y )
+		),
+		fvec3_multiply( from.z_axis, vec.z )
+	);
+	return fvec3_project_to( pt, to );
+}
+
+fvec4 fvec4_project_from_to( fvec4 vec, fcoordsys4 from, fcoordsys4 to )
+{
+	fvec4 pt = fvec4_add(
+		fvec4_add(
+			fvec4_add(
+				fvec4_add( 
+					from.origin,
+					fvec4_multiply( from.x_axis, vec.x )
+				),
+				fvec4_multiply( from.y_axis, vec.y )
+			),
+			fvec4_multiply( from.z_axis, vec.z )
+		),
+		fvec4_multiply( from.u_axis, vec.u )
+	);
+	return fvec4_project_to( pt, to );
+}
+
 fvec2 fmat2_get_row( fmat2 mat, int i )
 {
 	fvec2 result = {
