@@ -4,6 +4,54 @@
 #include <string.h>
 #include <math.h>
 
+fvec2 fvec2_add( fvec2 vec1, fvec2 vec2 )
+{
+	vec1.x += vec2.x;
+	vec1.y += vec2.y;
+	return vec1;
+}
+
+fvec3 fvec3_add( fvec3 vec1, fvec3 vec2 )
+{
+	vec1.x += vec2.x;
+	vec1.y += vec2.y;
+	vec1.z += vec2.z;
+	return vec1;
+}
+
+fvec4 fvec4_add( fvec4 vec1, fvec4 vec2 )
+{
+	vec1.x += vec2.x;
+	vec1.y += vec2.y;
+	vec1.z += vec2.z;
+	vec1.u += vec2.u;
+	return vec1;
+}
+
+fvec2 fvec2_multiply( fvec2 vec, float factor )
+{
+	vec.x *= factor;
+	vec.y *= factor;
+	return vec;
+}
+
+fvec3 fvec3_multiply( fvec3 vec, float factor )
+{
+	vec.x *= factor;
+	vec.y *= factor;
+	vec.z *= factor;
+	return vec;
+}
+
+fvec4 fvec4_multiply( fvec4 vec, float factor )
+{
+	vec.x *= factor;
+	vec.y *= factor;
+	vec.z *= factor;
+	vec.u *= factor;
+	return vec;
+}
+
 float fvec2_dot( fvec2 vec1, fvec2 vec2 )
 {
 	return vec1.x * vec2.x + vec1.y * vec2.y;
@@ -32,6 +80,144 @@ float fvec3_norm( fvec3 vec )
 float fvec4_norm( fvec4 vec )
 {
 	return sqrt( pow( vec.x, 2 ) + pow( vec.y, 2 ) + pow( vec.z, 2 ) + pow( vec.u, 2 ) );
+}
+
+fvec2 fvec2_normalize( fvec2 vec )
+{
+	return fvec2_scalar_divide( vec, fvec2_norm( vec ) );
+}
+
+fvec3 fvec3_normalize( fvec3 vec )
+{
+	return fvec3_scalar_divide( vec, fvec3_norm( vec ) );
+}
+
+fvec4 fvec4_normalize( fvec4 vec )
+{
+	return fvec4_scalar_divide( vec, fvec4_norm( vec ) );
+}
+
+fvec2 fvec2_scalar_divide( fvec2 dividend, float divider )
+{
+	dividend.x /= divider;
+	dividend.y /= divider;
+	return dividend;
+}
+
+fvec3 fvec3_scalar_divide( fvec3 dividend, float divider )
+{
+	dividend.x /= divider;
+	dividend.y /= divider;
+	dividend.z /= divider;
+	return dividend;
+}
+
+fvec4 fvec4_scalar_divide( fvec4 dividend, float divider )
+{
+	dividend.x /= divider;
+	dividend.y /= divider;
+	dividend.z /= divider;
+	dividend.u /= divider;
+	return dividend;
+}
+
+float fvec2_vector_divide( fvec2 dividend, fvec2 divider )
+{
+	float dividend_norm = fvec2_norm( dividend ), divider_norm = fvec2_norm( divider );
+	fvec2 quotient = { 0, 0 };
+	if ( divider.x != 0 ) quotient.x = fabs( dividend.x / divider.x );
+	if ( divider.y != 0 ) quotient.y = fabs( dividend.y / divider.y );
+	float d = fvec2_dot( fvec2_normalize( dividend ), fvec2_normalize( divider ) );
+	if ( d > 0 ){
+		float q = fmin( quotient.x, quotient.y );
+		return q;
+	}else if ( d < 0 ){
+		float q = fmin( quotient.x, quotient.y );
+		return -q;
+	}else{
+		return 0;
+	}
+}
+
+float fvec3_vector_divide( fvec3 dividend, fvec3 divider )
+{
+	float dividend_norm = fvec3_norm( dividend ), divider_norm = fvec3_norm( divider );
+	fvec3 quotient = { 0, 0, 0 };
+	if ( divider.x != 0 ) quotient.x = fabs( dividend.x / divider.x );
+	if ( divider.y != 0 ) quotient.y = fabs( dividend.y / divider.y );
+	if ( divider.z != 0 ) quotient.z = fabs( dividend.z / divider.z );
+	float d = fvec3_dot( fvec3_normalize( dividend ), fvec3_normalize( divider ) );
+	if ( d > 0 ){
+		float q = fmin( fmin( quotient.x, quotient.y ), quotient.z );
+		return q;
+	}else if ( d < 0 ){
+		float q = fmin( fmin( quotient.x, quotient.y ), quotient.z );
+		return -q;
+	}else{
+		return 0;
+	}
+}
+
+float fvec4_vector_divide( fvec4 dividend, fvec4 divider )
+{
+	float dividend_norm = fvec4_norm( dividend ), divider_norm = fvec4_norm( divider );
+	fvec4 quotient = { 0, 0, 0, 0 };
+	if ( divider.x != 0 ) quotient.x = fabs( dividend.x / divider.x );
+	if ( divider.y != 0 ) quotient.y = fabs( dividend.y / divider.y );
+	if ( divider.z != 0 ) quotient.z = fabs( dividend.z / divider.z );
+	if ( divider.u != 0 ) quotient.u = fabs( dividend.u / divider.u );
+	float d = fvec4_dot( fvec4_normalize( dividend ), fvec4_normalize( divider ) );
+	if ( d > 0 ){
+		float q = fmin( fmin( fmin( quotient.x, quotient.y ), quotient.z ), quotient.u );
+		return q;
+	}else if ( d < 0 ){
+		float q = fmin( fmin( fmin( quotient.x, quotient.y ), quotient.z ), quotient.u );
+		return -q;
+	}else{
+		return 0;
+	}
+}
+
+fvec2 fvec2_project_to( fvec2 vec, fcoordsys2 coordsys )
+{
+	return fvec2_add( 
+		fvec2_add( 
+			coordsys.origin, 
+			fvec2_multiply( coordsys.x_axis, vec.x ) 
+		), 
+		fvec2_multiply( coordsys.y_axis, vec.y ) 
+	);
+}
+
+fvec3 fvec3_project_to( fvec3 vec, fcoordsys3 coordsys )
+{
+	return fvec3_add(
+		fvec3_add( 
+			fvec3_add( 
+				coordsys.origin, 
+				fvec3_multiply( coordsys.x_axis, vec.x ) 
+			), 
+			fvec3_multiply( coordsys.y_axis, vec.y ) 
+		),
+		fvec3_multiply( coordsys.z_axis, vec.z )
+	);
+}
+
+fvec4 fvec4_project_to( fvec4 vec, fcoordsys4 coordsys )
+{
+	return fvec4_add(
+		fvec4_add(
+			fvec4_add( 
+				fvec4_add( 
+					coordsys.origin, 
+					fvec4_multiply( coordsys.x_axis, vec.x ) 
+				), 
+				fvec4_multiply( coordsys.y_axis, vec.y ) 
+			),
+			fvec4_multiply( coordsys.z_axis, vec.z )
+		),
+		fvec4_multiply( coordsys.u_axis, vec.u )
+	);
 }
 
 fvec2 fmat2_get_row( fmat2 mat, int i )

@@ -29,6 +29,26 @@ typedef float fmat2[2*2];
 typedef float fmat3[3*3];
 typedef float fmat4[4*4];
 
+typedef struct fcoordsys2 {
+	fvec2 origin, x_axis, y_axis;
+} fcoordsys2;
+
+typedef struct fcoordsys3 {
+	fvec3 origin, x_axis, y_axis, z_axis;
+} fcoordsys3;
+
+typedef struct fcoordsys4 {
+	fvec4 origin, x_axis, y_axis, z_axis, u_axis;
+} fcoordsys4;
+
+fvec2 fvec2_add( fvec2 vec1, fvec2 vec2 );
+fvec3 fvec3_add( fvec3 vec1, fvec3 vec2 );
+fvec4 fvec4_add( fvec4 vec1, fvec4 vec2 );
+
+fvec2 fvec2_multiply( fvec2 vec, float factor );
+fvec3 fvec3_multiply( fvec3 vec, float factor );
+fvec4 fvec4_multiply( fvec4 vec, float factor );
+
 float fvec2_dot( fvec2 vec1, fvec2 vec2 );
 float fvec3_dot( fvec3 vec1, fvec3 vec2 );
 float fvec4_dot( fvec4 vec1, fvec4 vec2 );
@@ -36,6 +56,22 @@ float fvec4_dot( fvec4 vec1, fvec4 vec2 );
 float fvec2_norm( fvec2 vec );
 float fvec3_norm( fvec3 vec );
 float fvec4_norm( fvec4 vec );
+
+fvec2 fvec2_normalize( fvec2 vec );
+fvec3 fvec3_normalize( fvec3 vec );
+fvec4 fvec4_normalize( fvec4 vec );
+
+fvec2 fvec2_scalar_divide( fvec2 dividend, float divider );
+fvec3 fvec3_scalar_divide( fvec3 dividend, float divider );
+fvec4 fvec4_scalar_divide( fvec4 dividend, float divider );
+
+float fvec2_vector_divide( fvec2 dividend, fvec2 divider );
+float fvec3_vector_divide( fvec3 dividend, fvec3 divider );
+float fvec4_vector_divide( fvec4 dividend, fvec4 divider );
+
+fvec2 fvec2_project_to( fvec2 vec, fcoordsys2 coordsys );
+fvec3 fvec3_project_to( fvec3 vec, fcoordsys3 coordsys );
+fvec4 fvec4_project_to( fvec4 vec, fcoordsys4 coordsys );
 
 fvec2 fmat2_get_row( fmat2 mat, int i );
 fvec2 fmat2_get_column( fmat2 mat, int i );
