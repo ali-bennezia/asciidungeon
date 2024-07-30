@@ -202,10 +202,14 @@ void asciidng_clear_entities()
 UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, unsigned int size_y, char *text, int layer )
 {
 	IntVec2 btn_pos = { x, y }, btn_size = { size_x, size_y };
+	IntVec2 txt_pos = {
+		floor( (float)(x + x+size_x)/2.0 ) - strlen( text ) / 2,
+		floor( (float)(y + y+size_y)/2.0 ),
+	};
 	RGB btn_col = { 255, 255, 255 };
-	UIText *btn_txt = gen_ui_text( text, btn_pos, btn_col, layer );
 
 	UIFrame *btn_frame = gen_ui_frame( btn_pos, btn_size, btn_col, layer );	
+	UIText *btn_txt = gen_ui_text( text, txt_pos, btn_col, layer );
 
 	UICallbacks clbs = {
 		NULL, NULL, NULL

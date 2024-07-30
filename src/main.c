@@ -41,6 +41,15 @@ void sigint_handler( int sig )
 	terminate();
 }
 
+static void test_callbck( MouseEvent e, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_TYPE type )
+{
+	RGB col = {
+		255, 0, 0
+	};
+	UIButtonInstance *i = ( UIButtonInstance* ) ui_instance;
+	i->ui_frame->color = col;
+}
+
 static void init()
 {
 	asciigl_init();
@@ -74,12 +83,16 @@ static void init()
 	asciidng_register_tile_definition( "test_tile", NULL, NULL );
 
 	asciidng_set_movement_enabled( true );
-	asciidng_hide_mouse();
+//	asciidng_hide_mouse();
 
 	asciidng_gen_tile( "test_tile", 0, 0, -5 );
 	asciidng_gen_tile( "test_tile", 0, 0, 5 );
 
-	asciidng_gen_ui_frame( 0, 0, 10, 10, 0 );
+//	UIFrameInstance *frame = asciidng_gen_ui_frame( 0, 0, 10, 10, 0 );
+//	frame->callbacks.on_mouse_click_callback = test_callbck;
+
+	UIButtonInstance *btn = asciidng_gen_ui_button(10, 10, 20, 5, "Hello, World!", -1);
+	btn->callbacks.on_mouse_click_callback = test_callbck;
 }
 
 static void loop()

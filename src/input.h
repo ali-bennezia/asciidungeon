@@ -1,7 +1,6 @@
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
-
 #include <stdint.h>
 
 enum ASCIIDNG_MOUSE_EVENT {
@@ -23,12 +22,12 @@ typedef struct _MouseButtonEvent {
 } MouseButtonEvent;
 
 typedef struct _MouseMoveEvent {
-	int mouse_position_x, mouse_position_y;
 	int mouse_delta_x, mouse_delta_y;
 } MouseMoveEvent;
 
 typedef struct _MouseEvent {
 	enum ASCIIDNG_MOUSE_EVENT type;
+	int mouse_position_x, mouse_position_y;
 	union {
 		MouseButtonEvent button_data;
 		int wheel_delta;

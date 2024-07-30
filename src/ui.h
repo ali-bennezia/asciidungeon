@@ -1,6 +1,13 @@
 #ifndef _UI_H_
 #define _UI_H_
 
+enum ASCIIDNG_UI_INSTANCE_TYPE {
+	ASCIIDNG_UI_TEXT,
+	ASCIIDNG_UI_FRAME,
+	ASCIIDNG_UI_IMAGE,
+	ASCIIDNG_UI_BUTTON,
+};
+
 struct UIText;
 typedef struct UIText UIText;
 struct UIFrame;
@@ -11,7 +18,7 @@ typedef struct UIImage UIImage;
 struct _MouseEvent;
 typedef struct _MouseEvent MouseEvent;
 
-typedef void (*UICallback)(MouseEvent);
+typedef void (*UICallback)(MouseEvent, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_TYPE);
 
 typedef struct UICallbacks {
 	UICallback on_mouse_click_callback;

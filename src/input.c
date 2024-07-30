@@ -326,6 +326,8 @@ static void win_poll_mouse_events()
 	g_old_mouse_pos.y = g_mouse_position.y;
 	g_mouse_position.x = m_pos.x;
 	g_mouse_position.y = m_pos.y;
+	ev.mouse_position_x = m_pos.x;
+	ev.mouse_position_x = m_pos.y;
 
 	IntVec2 delta_mouse_pos = {
 		g_mouse_position.x - g_old_mouse_pos.x,
@@ -337,8 +339,8 @@ static void win_poll_mouse_events()
 		ev.type = ASCIIDNG_MOUSE_MOVE;
 		ev.move_data.mouse_delta_x = delta_mouse_pos.x;
 		ev.move_data.mouse_delta_y = delta_mouse_pos.y;
-		ev.move_data.mouse_position_x = g_mouse_position.x;
-		ev.move_data.mouse_position_y = g_mouse_position.y;
+		//ev.move_data.mouse_position_x = g_mouse_position.x;
+		//ev.move_data.mouse_position_y = g_mouse_position.y;
 		call_mouse_event_listeners( ev );
 	}
 
