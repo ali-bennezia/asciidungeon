@@ -20,7 +20,6 @@ static void check_ui_button_events( MouseEvent e )
 	for ( size_t i = 0; i < ui_count; ++i )
 	{
 		UIButtonInstance *ui = asciidng_ui_button_at( i );
-		
 		int size_x = ui->ui_frame->size.x, size_y = ui->ui_frame->size.y;
 
 		if ( e.mouse_position_x < ui->ui_frame->position.x || e.mouse_position_x > ui->ui_frame->position.x + size_x ) continue;

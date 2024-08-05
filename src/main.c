@@ -41,13 +41,18 @@ void sigint_handler( int sig )
 	terminate();
 }
 
-static void test_callbck( MouseEvent e, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_TYPE type )
+UIButtonInstance *btn;
+
+void test_callbck( MouseEvent e, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_TYPE type )
 {
 	RGB col = {
 		255, 0, 0
 	};
 	UIButtonInstance *i = ( UIButtonInstance* ) ui_instance;
-	i->ui_frame->color = col;
+	char str[ 256 ];
+	sprintf( str, "%d, %d", e.mouse_position_x, e.mouse_position_y );
+	set_ui_text( btn->ui_txt, str );
+	i->ui_txt->color = col;
 }
 
 static void init()
@@ -91,8 +96,16 @@ static void init()
 //	UIFrameInstance *frame = asciidng_gen_ui_frame( 0, 0, 10, 10, 0 );
 //	frame->callbacks.on_mouse_click_callback = test_callbck;
 
-	UIButtonInstance *btn = asciidng_gen_ui_button(10, 10, 20, 5, "Hello, World!", -1);
-	btn->callbacks.on_mouse_click_callback = test_callbck;
+	btn = asciidng_gen_ui_button(10, 10, 20, 5, "Hello, World!", 0);
+	UICallbacks cb = {
+		test_callbck, NULL, NULL
+	};
+	btn->callbacks = cb;
+	RGB col = {
+		255, 0, 0
+	};
+	//btn->ui_frame->color = col;
+	//set_ui_text( btn->ui_txt, "Sup?" );
 }
 
 static void loop()

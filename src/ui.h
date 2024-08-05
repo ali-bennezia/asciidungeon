@@ -18,7 +18,7 @@ typedef struct UIImage UIImage;
 struct _MouseEvent;
 typedef struct _MouseEvent MouseEvent;
 
-typedef void (*UICallback)(MouseEvent, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_TYPE);
+typedef void (*UICallback)(MouseEvent, void*, enum ASCIIDNG_UI_INSTANCE_TYPE);
 
 typedef struct UICallbacks {
 	UICallback on_mouse_click_callback;

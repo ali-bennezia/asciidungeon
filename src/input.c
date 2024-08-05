@@ -316,18 +316,48 @@ static void win_handle_key_event( WORD key_code, BOOL key_down )
 	set_input_state( input, new_state );
 }
 
+static IntVec2 win_get_mouse_console_position()
+{
+	POINT m_pos;
+	GetCursorPos( &m_pos );
+
+	CONSOLE_FONT_INFO font;
+	GetCurrentConsoleFont( 
+		g_h_std_out,
+		FALSE,
+		&font
+	);
+
+	COORD char_size = GetConsoleFontSize(
+		g_h_std_out,
+		font.nFont
+	);
+
+	IntVec2 console_pos = {
+		floor( (double) m_pos.x / (double) char_size.X ),
+		floor( (double) m_pos.y / (double) char_size.Y )
+	};
+
+	return console_pos;
+}
+
 static void win_poll_mouse_events()
 {
 	MouseEvent ev;
 
-	POINT m_pos;
-	GetCursorPos( &m_pos );
+	//POINT m_pos;
+	//GetCursorPos( &m_pos );
+
+	IntVec2 m_pos = win_get_mouse_console_position();
+
 	g_old_mouse_pos.x = g_mouse_position.x;
 	g_old_mouse_pos.y = g_mouse_position.y;
+
 	g_mouse_position.x = m_pos.x;
 	g_mouse_position.y = m_pos.y;
+
 	ev.mouse_position_x = m_pos.x;
-	ev.mouse_position_x = m_pos.y;
+	ev.mouse_position_y = m_pos.y;
 
 	IntVec2 delta_mouse_pos = {
 		g_mouse_position.x - g_old_mouse_pos.x,
