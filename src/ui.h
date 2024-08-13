@@ -44,6 +44,7 @@ typedef struct UIButtonInstance {
 	UICallbacks callbacks;
 } UIButtonInstance;
 
+UICallbacks *get_ui_callbacks( void *ui, enum ASCIIDNG_UI_INSTANCE_TYPE type );
 void asciidng_init_ui();
 void asciidng_terminate_ui();
 

@@ -55,6 +55,26 @@ void test_callbck( MouseEvent e, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_TY
 	i->ui_txt->color = col;
 }
 
+void enter_callbck( MouseEvent e, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_TYPE type )
+{
+	RGB col = {
+		255, 0, 0
+	};
+	UIButtonInstance *i = ( UIButtonInstance* ) ui_instance;
+	set_ui_text( btn->ui_txt, "Entered" );
+	i->ui_txt->color = col;
+}
+
+void leave_callbck( MouseEvent e, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_TYPE type )
+{
+	RGB col = {
+		255, 0, 0
+	};
+	UIButtonInstance *i = ( UIButtonInstance* ) ui_instance;
+	set_ui_text( btn->ui_txt, "Left" );
+	i->ui_txt->color = col;
+}
+
 static void init()
 {
 	asciigl_init();
@@ -98,7 +118,7 @@ static void init()
 
 	btn = asciidng_gen_ui_button(10, 10, 20, 5, "Hello, World!", 0);
 	UICallbacks cb = {
-		test_callbck, NULL, NULL
+		test_callbck, enter_callbck, leave_callbck
 	};
 	btn->callbacks = cb;
 	RGB col = {
