@@ -19,6 +19,7 @@
 #include "input.h"
 #include "boolval.h"
 #include "player.h"
+#include "pseudophysics.h"
 
 #define DEBUG
 
@@ -31,6 +32,7 @@ static void terminate()
 	g_running = false;
 	asciidng_terminate_player();
 	asciidng_terminate_ui();
+	asciidng_physics_terminate()
 	asciidng_terminate_input();
 	asciidng_terminate_workspace();
 	asciidng_terminate_registry();
@@ -81,8 +83,10 @@ static void init()
 	asciidng_init_registry();
 	asciidng_init_workspace();
 	asciidng_init_input();
+	asciidng_physics_init()
 	asciidng_init_ui();
 	asciidng_init_player();
+
 
 	atexit( terminate );
 	signal( SIGINT, sigint_handler );
@@ -132,6 +136,7 @@ static void loop()
 {
 	while (g_running)
 	{
+		asciidng_physics_loop();
 		asciidng_poll_input();
 		asciidng_player_loop();
 		asciigl_process_frame();

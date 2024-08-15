@@ -224,17 +224,19 @@ static void mouse_event_listener( MouseEvent e )
 	check_ui_image_events( e, &current_selected_ui, &current_selected_ui_layer, &current_selected_ui_type );
 	check_ui_button_events( e, &current_selected_ui, &current_selected_ui_layer, &current_selected_ui_type );
 
-	if ( selected_ui == NULL && current_selected_ui != NULL ){
-		UICallback cb1 = get_ui_callbacks( current_selected_ui, current_selected_ui_type )->on_mouse_enter_callback;
-		if ( cb1 != NULL ) cb1( e, ( void* ) current_selected_ui, current_selected_ui_type );	
-	}else if ( selected_ui != NULL && current_selected_ui == NULL ){
-		UICallback cb1 = get_ui_callbacks( selected_ui, selected_ui_type )->on_mouse_leave_callback;
-		if ( cb1 != NULL ) cb1( e, ( void* ) selected_ui, selected_ui_type );	
-	}else if ( selected_ui != NULL && current_selected_ui != NULL && selected_ui != current_selected_ui ){
-		UICallback cb1 = get_ui_callbacks( selected_ui, selected_ui_type )->on_mouse_leave_callback;
-		if ( cb1 != NULL ) cb1( e, ( void* ) selected_ui, selected_ui_type );
-		UICallback cb2 = get_ui_callbacks( current_selected_ui, current_selected_ui_type )->on_mouse_enter_callback;
-		if ( cb2 != NULL ) cb2( e, ( void* ) current_selected_ui, current_selected_ui_type );	
+	if ( selected_ui != current_selected_ui ){
+		if ( selected_ui == NULL && current_selected_ui != NULL ){
+			UICallback cb1 = get_ui_callbacks( current_selected_ui, current_selected_ui_type )->on_mouse_enter_callback;
+			if ( cb1 != NULL ) cb1( e, ( void* ) current_selected_ui, current_selected_ui_type );	
+		}else if ( selected_ui != NULL && current_selected_ui == NULL ){
+			UICallback cb1 = get_ui_callbacks( selected_ui, selected_ui_type )->on_mouse_leave_callback;
+			if ( cb1 != NULL ) cb1( e, ( void* ) selected_ui, selected_ui_type );	
+		}else if ( selected_ui != NULL && current_selected_ui != NULL ){
+			UICallback cb1 = get_ui_callbacks( selected_ui, selected_ui_type )->on_mouse_leave_callback;
+			if ( cb1 != NULL ) cb1( e, ( void* ) selected_ui, selected_ui_type );
+			UICallback cb2 = get_ui_callbacks( current_selected_ui, current_selected_ui_type )->on_mouse_enter_callback;
+			if ( cb2 != NULL ) cb2( e, ( void* ) current_selected_ui, current_selected_ui_type );	
+		}
 	}
 
 	selected_ui = current_selected_ui;
