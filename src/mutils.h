@@ -77,6 +77,10 @@ fvec2 fvec2_project_from_to( fvec2 vec, fcoordsys2 from, fcoordsys2 to );
 fvec3 fvec3_project_from_to( fvec3 vec, fcoordsys3 from, fcoordsys3 to );
 fvec4 fvec4_project_from_to( fvec4 vec, fcoordsys4 from, fcoordsys4 to );
 
+fvec2 fvec2_zero();
+fvec3 fvec3_zero();
+fvec4 fvec4_zero();
+
 fvec2 fmat2_get_row( fmat2 mat, int i );
 fvec2 fmat2_get_column( fmat2 mat, int i );
 fvec3 fmat3_get_row( fmat3 mat, int i );

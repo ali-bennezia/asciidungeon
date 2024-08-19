@@ -32,7 +32,7 @@ static void terminate()
 	g_running = false;
 	asciidng_terminate_player();
 	asciidng_terminate_ui();
-	asciidng_physics_terminate()
+	asciidng_terminate_physics();
 	asciidng_terminate_input();
 	asciidng_terminate_workspace();
 	asciidng_terminate_registry();
@@ -83,7 +83,7 @@ static void init()
 	asciidng_init_registry();
 	asciidng_init_workspace();
 	asciidng_init_input();
-	asciidng_physics_init()
+	asciidng_init_physics();
 	asciidng_init_ui();
 	asciidng_init_player();
 
@@ -136,9 +136,9 @@ static void loop()
 {
 	while (g_running)
 	{
-		asciidng_physics_loop();
+		asciidng_loop_physics();
 		asciidng_poll_input();
-		asciidng_player_loop();
+		asciidng_loop_player();
 		asciigl_process_frame();
 	}
 }

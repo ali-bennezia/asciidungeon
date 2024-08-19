@@ -7,7 +7,7 @@
 
 static boolval g_movement_enabled = false;
 
-void asciidng_player_loop()
+void asciidng_loop_player()
 {
 	if ( !g_movement_enabled ) return;
 	if ( asciidng_get_input_state( "Forward" ) == 1 )

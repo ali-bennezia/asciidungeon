@@ -2,19 +2,30 @@
 
 #include <asciigl.h>
 
-static DynamicArray rigid_bodies;
+typedef struct RigidBodyQuadTreeNode {
+	int x, y;
+	DynamicArray data;
+	struct RigidBodyQuadTreeNode *children[ 4 ];
+} RigidBodyQuadTreeNode;
 
-void asciidng_physics_init()
+static RigidBodyQuadTreeNode root;
+
+RaycastResult asciidng_cast_ray( Ray ray )
 {
-	rigid_bodies = gen_dynamic_array( sizeof( RigidBody ) );
+	RaycastResult result = { ray, NULL, fvec3_zero() };
+	return result;
 }
 
-void asciidng_physics_loop()
+void asciidng_init_physics()
+{
+	
+}
+
+void asciidng_loop_physics()
 {
 
 }
 
-void asciidng_physics_terminate()
+void asciidng_terminate_physics()
 {
-	free_dynamic_array( &rigid_bodies );
 }

@@ -3,7 +3,7 @@
 
 #include "boolval.h"
 
-void asciidng_player_loop();
+void asciidng_loop_player();
 
 void asciidng_init_player();
 void asciidng_terminate_player();

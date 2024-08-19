@@ -265,6 +265,24 @@ fvec4 fvec4_project_from_to( fvec4 vec, fcoordsys4 from, fcoordsys4 to )
 	return fvec4_project_to( pt, to );
 }
 
+fvec2 fvec2_zero()
+{
+	fvec2 zero = { 0 };
+	return zero;
+}
+
+fvec3 fvec3_zero()
+{
+	fvec3 zero = { 0 };
+	return zero;
+}
+
+fvec4 fvec4_zero()
+{
+	fvec4 zero = { 0 };
+	return zero;
+}
+
 fvec2 fmat2_get_row( fmat2 mat, int i )
 {
 	fvec2 result = {

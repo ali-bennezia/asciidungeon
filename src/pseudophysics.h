@@ -19,11 +19,12 @@ enum COLLIDER_TYPE {
 
 typedef struct Collider {
 	enum COLLIDER_TYPE collider_type;
+	fvec3 local_position, local_rotation;
 	union {
 		fvec3 size;
 		float radius;
 	};
-};
+} Collider;
 
 typedef struct RigidBody {
 	enum BODY_TYPE body_type;
@@ -31,8 +32,21 @@ typedef struct RigidBody {
 	Collider collider;
 } RigidBody;
 
-void asciidng_physics_init();
-void asciidng_physics_loop();
-void asciidng_physics_terminate();
+typedef struct Ray {
+	fvec3 vertex, direction;
+	float length;
+} Ray;
+
+typedef struct RaycastResult {
+	Ray ray;
+	RigidBody *collided_object;
+	fvec3 collision_point;	
+} RaycastResult;
+
+RaycastResult asciidng_cast_ray( Ray ray );
+
+void asciidng_init_physics();
+void asciidng_loop_physics();
+void asciidng_terminate_physics();
 
 #endif
