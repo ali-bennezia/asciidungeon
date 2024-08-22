@@ -87,7 +87,6 @@ static void init()
 	asciidng_init_ui();
 	asciidng_init_player();
 
-
 	atexit( terminate );
 	signal( SIGINT, sigint_handler );
 
