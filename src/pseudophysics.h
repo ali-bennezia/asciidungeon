@@ -30,6 +30,7 @@ typedef struct RigidBody {
 	enum BODY_TYPE body_type;
 	Transform transform;
 	Collider collider;
+	fvec3 bounding_box_min, bounding_box_max;
 } RigidBody;
 
 typedef struct Ray {
@@ -45,6 +46,9 @@ typedef struct RaycastResult {
 
 RaycastResult asciidng_cast_ray( Ray ray );
 
+void asciidng_generate_parallelepiped_vertices( fvec3 size, fvec3 *vertices );
+void asciidng_generate_parallelepiped_collider_vertices( Collider collider, fvec3 *vertices );
+void asciidng_process_bounding_box( RigidBody *rigid_body );
 void asciidng_init_physics();
 void asciidng_loop_physics();
 void asciidng_terminate_physics();

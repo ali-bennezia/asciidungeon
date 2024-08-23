@@ -550,14 +550,6 @@ fvec4 fmat4_fvec4_mult( fmat4 mat1, fvec4 vec )
 	return result;
 }
 
-void fmat2_rotation_matrix( float theta, fmat2 out )
-{
-	fmat2_set( out, cos( theta ), 0, 0 );
-	fmat2_set( out, -sin( theta ), 0, 1 );
-	fmat2_set( out, sin( theta ), 1, 0 );
-	fmat2_set( out, cos( theta ), 1, 1 );	
-}
-
 void fmat3_x_rotation_matrix( float theta, fmat3 out )
 {
 	fmat3_set( out, 0, 0, 0 );
@@ -603,6 +595,14 @@ void fmat3_z_rotation_matrix( float theta, fmat3 out )
 	fmat3_set( out, -sin( theta ), 0, 1 );
 	fmat3_set( out, sin( theta ), 1, 0 );
 	fmat3_set( out, cos( theta ), 1, 1 );
+}
+
+void fmat2_rotation_matrix( float theta, fmat2 out )
+{
+	fmat2_set( out, cos( theta ), 0, 0 );
+	fmat2_set( out, -sin( theta ), 0, 1 );
+	fmat2_set( out, sin( theta ), 1, 0 );
+	fmat2_set( out, cos( theta ), 1, 1 );	
 }
 
 void fmat3_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angle_rads, fmat3 out )

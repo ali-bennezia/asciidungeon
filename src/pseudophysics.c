@@ -1,82 +1,6 @@
 #include "pseudophysics.h"
 
-#include <stdlib.h>
 #include <stddef.h>
-
-#include <asciigl.h>
-
-typedef struct RigidBodyQuadTreeNode {
-	int x, y;
-	DynamicArray data;
-	struct RigidBodyQuadTreeNode *parent;
-	int index;
-	struct RigidBodyQuadTreeNode *children[ 4 ];
-} RigidBodyQuadTreeNode;
-
-static RigidBodyQuadTreeNode root;
-
-static RigidBodyQuadTreeNode *get_node_child( RigidBodyQuadTreeNode *node, int local_x, int local_y )
-{
-	int local_index = local_y * 2 + local_x;
-	return node->children[ local_index ];
-}
-
-static void init_node_child( RigidBodyQuadTreeNode *node, int local_x, int local_y )
-{
-	int local_index = local_y * 2 + local_x;
-	RigidBodyQuadTreeNode *child_node = malloc( sizeof( RigidBodyQuadTreeNode ) );
-	child_node->x = local_x;
-	child_node->y = local_y;
-	child_node->data = gen_dynamic_array( sizeof( RigidBody ) );
-	child_node->parent = node;
-	child_node->index = local_index;
-	child_node->children = { NULL };
-	node->children[ local_index ] = child_node;	
-}
-
-static void free_node_child( RigidBodyQuadTreeNode *node, int local_x, int local_y )
-{
-	RigidBodyQuadTreeNode *child_node = get_node_child( node, local_x, local_y );
-	if ( child_node != NULL ) {
-		free_node( child_node );
-		int local_index = local_y * 2 + local_x;	
-		node->children[ local_index ] = NULL;
-	}
-}
-
-static void free_node( RigidBodyQuadTreeNode *node )
-{
-	free_dynamic_array( &node->data );
-	for ( size_t i = 0; i < 4; ++i )
-	{
-		RigidBodyQuadTreeNode *child_node = node->children[ i ];
-		if ( child_node != NULL ) free_node( child_node );
-	}
-	free( node );
-}
-
-static void init_quadtree_root()
-{
-	RigidBodyQuadTreeNode init_root = {
-		0, 0,
-		gen_dynamic_array( sizeof( RigidBody ) ),
-		NULL,
-		-1,
-		{ NULL }
-	};
-	root = init_root;
-}
-
-static void free_quadtree_root()
-{
-	for ( size_t i = 0; i < 4; ++i )
-	{
-		RigidBodyQuadTreeNode *child_node = root.children[ i ];
-		if ( child_node != NULL ) free_node( child_node );
-		root.children[ i ] = NULL; 
-	}	
-	free_dynamic_array( &root.data );
-}
 
 RaycastResult asciidng_cast_ray( Ray ray )
 {
@@ -84,9 +8,47 @@ RaycastResult asciidng_cast_ray( Ray ray )
 	return result;
 }
 
+void asciidng_generate_parallelepiped_vertices( fvec3 size, fvec3 *vertices )
+{
+	fvec3 half_size = fvec3_scalar_divide( size, 2 );
+	size_t index = 0;
+	for ( int x = 0; x < 2; ++x ){
+		if ( x <= 0 ) x = -1;
+		for ( int y = 0; y < 2; ++y ){
+			if ( y <= 0 ) y = -1;
+			for ( int z = 0; z < 2; ++z ){
+				if ( z <= 0 ) z = -1;
+				fvec3 vert = {
+					half_size.x * x,
+					half_size.y * y,
+					half_size.z * z
+				};
+				*( vertices + index ) = vert;
+				++index;
+			}
+		}
+	}
+}
+
+void asciidng_generate_parallelepiped_collider_vertices( Collider collider, fvec3 *vertices )
+{
+	asciidng_generate_parallelepiped_vertices( collider.size, vertices );
+	fmat3 rotation_matrix;
+	fmat3_rotation_matrix( collider.local_rotation.x, collider.local_rotation.y, collider.local_rotation.z, rotation_matrix );
+	for ( size_t i = 0; i < 8; ++i ){
+		vertices[ i ] = fmat3_fvec3_mult( rotation_matrix, vertices[ i ] );
+		vertices[ i ] = fvec3_add( vertices[ i ], collider.local_position );
+	}
+}
+
+void asciidng_process_transform_bounding_box( RigidBody *rigid_body )
+{
+	fvec3 vertices[ 8 ];
+	
+}
+
 void asciidng_init_physics()
 {
-	init_quadtree_root();	
 }
 
 void asciidng_loop_physics()
@@ -95,5 +57,4 @@ void asciidng_loop_physics()
 
 void asciidng_terminate_physics()
 {
-	free_quadtree_root();
 }
