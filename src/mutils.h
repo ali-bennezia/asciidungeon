@@ -41,9 +41,21 @@ typedef struct fcoordsys4 {
 	fvec4 origin, x_axis, y_axis, z_axis, u_axis;
 } fcoordsys4;
 
+int ivec2_equals( ivec2 vec1, ivec2 vec2 );
+int ivec3_equals( ivec3 vec1, ivec3 vec2 );
+int ivec4_equals( ivec4 vec1, ivec4 vec2 );
+
+int fvec2_equals( fvec2 vec1, fvec2 vec2 );
+int fvec3_equals( fvec3 vec1, fvec3 vec2 );
+int fvec4_equals( fvec4 vec1, fvec4 vec2 );
+
 fvec2 fvec2_add( fvec2 vec1, fvec2 vec2 );
 fvec3 fvec3_add( fvec3 vec1, fvec3 vec2 );
 fvec4 fvec4_add( fvec4 vec1, fvec4 vec2 );
+
+fvec2 fvec2_substract( fvec2 vec1, fvec2 vec2 );
+fvec3 fvec3_substract( fvec3 vec1, fvec3 vec2 );
+fvec4 fvec4_substract( fvec4 vec1, fvec4 vec2 );
 
 fvec2 fvec2_multiply( fvec2 vec, float factor );
 fvec3 fvec3_multiply( fvec3 vec, float factor );
@@ -60,6 +72,10 @@ float fvec4_norm( fvec4 vec );
 fvec2 fvec2_normalize( fvec2 vec );
 fvec3 fvec3_normalize( fvec3 vec );
 fvec4 fvec4_normalize( fvec4 vec );
+
+fvec2 fvec2_abs( fvec2 vec );
+fvec3 fvec3_abs( fvec3 vec );
+fvec4 fvec4_abs( fvec4 vec );
 
 fvec2 fvec2_scalar_divide( fvec2 dividend, float divider );
 fvec3 fvec3_scalar_divide( fvec3 dividend, float divider );

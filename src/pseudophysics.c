@@ -41,7 +41,7 @@ void asciidng_generate_parallelepiped_collider_vertices( Collider collider, fvec
 	}
 }
 
-void asciidng_process_transform_bounding_box( RigidBody *rigid_body )
+BoundingBox asciidng_generate_transform_bounding_box( RigidBody *rigid_body )
 {
 	Transform transform = rigid_body->transform;
 
@@ -76,8 +76,17 @@ void asciidng_process_transform_bounding_box( RigidBody *rigid_body )
 
 	fvec3 bb_min = { min_x, min_y, min_z }, bb_max = { max_x, max_y, max_z };
 
-	rigid_body->bounding_box_min = bb_min;
-	rigid_body->bounding_box_max = bb_max;
+	BoundingBox bb = {
+		bb_min, bb_max
+	};
+
+	return bb;
+}
+
+void asciidng_update_rigid_body_bounding_box( RigidBody *rigid_body )
+{
+	BoundingBox bb = asciidng_generate_transform_bounding_box( rigid_body );
+	rigid_body->bounding_box = bb;
 }
 
 void asciidng_init_physics()

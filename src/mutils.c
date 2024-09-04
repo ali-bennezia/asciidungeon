@@ -4,6 +4,60 @@
 #include <string.h>
 #include <math.h>
 
+int ivec2_equals( ivec2 vec1, ivec2 vec2 )
+{
+	return ( 
+		vec1.x == vec2.x 
+		&& vec1.y == vec2.y 
+	);
+}
+
+int ivec3_equals( ivec3 vec1, ivec3 vec2 )
+{
+	return ( 
+		vec1.x == vec2.x 
+		&& vec1.y == vec2.y
+		&& vec1.z == vec2.z 
+	);
+}
+
+int ivec4_equals( ivec4 vec1, ivec4 vec2 )
+{
+	return ( 
+		vec1.x == vec2.x 
+		&& vec1.y == vec2.y
+		&& vec1.z == vec2.z 
+		&& vec1.u == vec2.u 
+	);
+}
+
+int fvec2_equals( fvec2 vec1, fvec2 vec2 )
+{
+	return ( 
+		vec1.x == vec2.x 
+		&& vec1.y == vec2.y 
+	);
+}
+
+int fvec3_equals( fvec3 vec1, fvec3 vec2 )
+{
+	return ( 
+		vec1.x == vec2.x 
+		&& vec1.y == vec2.y
+		&& vec1.z == vec2.z 
+	);
+}
+
+int fvec4_equals( fvec4 vec1, fvec4 vec2 )
+{
+	return ( 
+		vec1.x == vec2.x 
+		&& vec1.y == vec2.y
+		&& vec1.z == vec2.z 
+		&& vec1.u == vec2.u 
+	);
+}
+
 fvec2 fvec2_add( fvec2 vec1, fvec2 vec2 )
 {
 	vec1.x += vec2.x;
@@ -25,6 +79,31 @@ fvec4 fvec4_add( fvec4 vec1, fvec4 vec2 )
 	vec1.y += vec2.y;
 	vec1.z += vec2.z;
 	vec1.u += vec2.u;
+	return vec1;
+}
+
+
+fvec2 fvec2_substract( fvec2 vec1, fvec2 vec2 )
+{
+	vec1.x -= vec2.x;
+	vec1.y -= vec2.y;
+	return vec1;
+}
+
+fvec3 fvec3_substract( fvec3 vec1, fvec3 vec2 )
+{
+	vec1.x -= vec2.x;
+	vec1.y -= vec2.y;
+	vec1.z -= vec2.z;
+	return vec1;
+}
+
+fvec4 fvec4_substract( fvec4 vec1, fvec4 vec2 )
+{
+	vec1.x -= vec2.x;
+	vec1.y -= vec2.y;
+	vec1.z -= vec2.z;
+	vec1.u -= vec2.u;
 	return vec1;
 }
 
@@ -95,6 +174,36 @@ fvec3 fvec3_normalize( fvec3 vec )
 fvec4 fvec4_normalize( fvec4 vec )
 {
 	return fvec4_scalar_divide( vec, fvec4_norm( vec ) );
+}
+
+fvec2 fvec2_abs( fvec2 vec )
+{
+	fvec2 result = {
+		fabs( vec.x ),
+		fabs( vec.y )
+	};
+	return result;
+}
+
+fvec3 fvec3_abs( fvec3 vec )
+{
+	fvec3 result = {
+		fabs( vec.x ),
+		fabs( vec.y ),
+		fabs( vec.z )
+	};
+	return result;
+}
+
+fvec4 fvec4_abs( fvec4 vec )
+{
+	fvec4 result = {
+		fabs( vec.x ),
+		fabs( vec.y ),
+		fabs( vec.z ),
+		fabs( vec.u )
+	};
+	return result;
 }
 
 fvec2 fvec2_scalar_divide( fvec2 dividend, float divider )
