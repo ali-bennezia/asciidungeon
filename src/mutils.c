@@ -374,6 +374,24 @@ fvec4 fvec4_project_from_to( fvec4 vec, fcoordsys4 from, fcoordsys4 to )
 	return fvec4_project_to( pt, to );
 }
 
+ivec2 ivec2_zero()
+{
+	ivec2 zero = { 0 };
+	return zero;
+}
+
+ivec3 ivec3_zero()
+{
+	ivec3 zero = { 0 };
+	return zero;
+}
+
+ivec4 ivec4_zero()
+{
+	ivec4 zero = { 0 };
+	return zero;
+}
+
 fvec2 fvec2_zero()
 {
 	fvec2 zero = { 0 };

@@ -93,6 +93,10 @@ fvec2 fvec2_project_from_to( fvec2 vec, fcoordsys2 from, fcoordsys2 to );
 fvec3 fvec3_project_from_to( fvec3 vec, fcoordsys3 from, fcoordsys3 to );
 fvec4 fvec4_project_from_to( fvec4 vec, fcoordsys4 from, fcoordsys4 to );
 
+ivec2 ivec2_zero();
+ivec3 ivec3_zero();
+ivec4 ivec4_zero();
+
 fvec2 fvec2_zero();
 fvec3 fvec3_zero();
 fvec4 fvec4_zero();
