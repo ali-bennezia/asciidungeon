@@ -3,6 +3,9 @@
 
 #include "mutils.h"
 
+struct Node;
+typedef struct Node Node;
+
 typedef struct Transform {
 	fvec3 position, rotation, velocity;
 } Transform;
@@ -35,6 +38,7 @@ typedef struct RigidBody {
 	Transform transform;
 	Collider collider;
 	BoundingBox bounding_box;
+	Node *node_cache;
 } RigidBody;
 
 typedef struct Ray {
