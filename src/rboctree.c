@@ -28,7 +28,9 @@ static Node root;
 
 // static functions
 
+static Node *get_nearest_branch_root( Node *node );
 static size_t get_children_count( Node *node );
+static size_t get_rigid_bodies_count( Node *node );
 static ivec3 get_lower_level_coords( int x, int y, int z, size_t level, size_t backsteps );
 static void get_bounding_box_coords( BoundingBox bb, ivec3 *coords_out, size_t *level_out );
 static ivec3 get_position_node_coordinates( fvec3 position, size_t level );
@@ -43,6 +45,16 @@ static void remove_child_node( Node *node, int local_x, int local_y, int local_z
 static void remove_node( int x, int y, int z, size_t level );
 static Node* generate_branch( int x, int y, int z, size_t level );
 
+static Node *get_nearest_branch_root( Node *node )
+{
+	Node *i = node;
+	while ( get_rigid_bodies_count( i ) <= 0 && get_children_count( i ) <= 1 ){
+		if ( node->parent == NULL ) break;
+		i = i->parent;
+	}
+	return i;
+}
+
 static size_t get_children_count( Node *node )
 {
 	size_t c = 0;
@@ -50,6 +62,12 @@ static size_t get_children_count( Node *node )
 		if ( node->children[ i ] != NULL ) ++c;
 	}
 	return c;
+}
+
+static size_t get_rigid_bodies_count( Node *node )
+{
+	if ( node->list_initialized == false ) return 0;
+	else return node->rigid_bodies.usage;
 }
 
 static ivec3 get_lower_level_coords( int x, int y, int z, size_t level, size_t backsteps )
@@ -217,17 +235,20 @@ static void remove_child_node( Node *node, int local_x, int local_y, int local_z
 	}
 }
 
-// TODO
+static void remove_node_ptr( Node *node )
+{
+	int local_x = node->x % 2, local_y = node->y % 2, local_z = node->z % 2;
+	size_t i = local_y * 4 + local_z * 2 + local_x;
+	node->parent->children[ i ] = NULL;
+	free_node( node, node == &root );
+}
+
 static void remove_node( int x, int y, int z, size_t level )
 {
-	Node *nearest_manifold = NULL;
-	size_t nearest_manifold_level;
-	Node *node = get_node( x, y, z, level, &nearest_manifold, &nearest_manifold_level );
-	if ( nearest_manifold != NULL ){
-		ivec3 manifold_child_coords = get_lower_level_coords( x, y, z, level, level - ( nearest_manifold_level + 1 ) );
-		remove_child_node( nearest_manifold, manifold_child_coords.x % 2, manifold_child_coords.y % 2, manifold_child_coords.z % 2 );
-	}else{
-	
+	Node *node = get_node( x, y, z, level, NULL, NULL );
+	Node *local_root = get_nearest_branch_root( node );
+	if ( local_root != NULL ){
+		remove_node_ptr( local_root );
 	}
 }
 
@@ -290,16 +311,16 @@ void asciidng_unregister_octree_rigid_body( RigidBody *rb )
 			}
 		}
 
-		size_t cnt = get_children_count( rb->node_cache );
-		if ( cnt == 0 ){
-			remove_node( rb->node_cache->x_coord, rb->node_cache->y_coord, rb->node_cache->z_coord, rb->node_cache->level );
+		if ( get_rigid_bodies_count( rb->node_cache ) <= 0 ){
+			remove_node( rb->node_cache->x, rb->node_cache->y, rb->node_cache->z, rb->node_cache->level );
 		}
 		rb->node_cache = NULL;
 	}
 }
 
-void asciidng_update_octree_rigidbody_transform( RigidBody *rb, BoundingBox old_bb, BoundingBox new_bb )
+void asciidng_update_octree_rigid_body( RigidBody *rb, BoundingBox old_bb )
 {
+	BoundingBox new_bb = rb->bounding_box;
 	ivec3 old_coords, new_coords;
 	size_t old_level, new_level;
 	get_bounding_box_coords( old_bb, &old_coords, &old_level );
@@ -307,6 +328,6 @@ void asciidng_update_octree_rigidbody_transform( RigidBody *rb, BoundingBox old_
 
 	if ( !ivec3_equals( old_coords, new_coords ) || old_level != new_level ){
 		asciidng_unregister_octree_rigid_body( rb );
-		Node *node = generate_branch( new_coords.x, new_coords.y, new_coords.z, new_level );	
+		asciidng_register_octree_rigid_body( rb );
 	}
 }

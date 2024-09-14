@@ -2,6 +2,12 @@
 
 #include <stddef.h>
 
+#include <asciigl.h>
+
+#include "rboctree.h"
+
+static DynamicArray rigid_bodies;
+
 RaycastResult asciidng_cast_ray( Ray ray )
 {
 	RaycastResult result = { ray, NULL, fvec3_zero() };
@@ -85,16 +91,90 @@ BoundingBox asciidng_generate_transform_bounding_box( RigidBody *rigid_body )
 
 void asciidng_update_rigid_body_bounding_box( RigidBody *rigid_body )
 {
+	BoundingBox old_bb = rigid_body->bounding_box;
 	BoundingBox bb = asciidng_generate_transform_bounding_box( rigid_body );
 	rigid_body->bounding_box = bb;
+	asciidng_update_octree_rigid_body( rigid_body, old_bb );
+}
+
+void asciidng_set_rigid_body_transform_position( RigidBody *rigid_body, fvec3 position )
+{
+	rigid_body->transform.position = position;
+	asciidng_update_rigid_body_bounding_box( rigid_body );	
+}
+
+void asciidng_set_rigid_body_transform_rotation( RigidBody *rigid_body, fvec3 rotation )
+{
+	rigid_body->transform.rotation = rotation;
+	asciidng_update_rigid_body_bounding_box( rigid_body );	
+}
+
+void asciidng_set_rigid_body_collider( RigidBody *rigid_body, Collider collider )
+{
+	rigid_body->collider = collider;
+	asciidng_update_rigid_body_bounding_box( rigid_body );	
+}
+
+void asciidng_translate_rigid_body( RigidBody *rigid_body, fvec3 translation )
+{
+	asciidng_set_rigid_body_transform_position( rigid_body, fvec3_add( rigid_body->transform.position, translation ) );
+}
+
+void asciidng_rotate_rigid_body( RigidBody *rigid_body, fvec3 rotation )
+{
+	asciidng_set_rigid_body_transform_rotation( rigid_body, fvec3_add( rigid_body->transform.rotation, rotation ) );
+}
+
+RigidBody *asciidng_create_rigid_body( enum BODY_TYPE type, fvec3 position, fvec3 rotation )
+{
+	Transform transform = {
+		position,
+		rotation,
+		fvec3_zero(),
+		fvec3_zero()
+	};
+
+	fvec3 one = { 1, 1, 1 };
+
+	BoundingBox bb;
+
+	Collider collider = {
+		PARALLELEPIPED_COLLIDER,
+		fvec3_zero(),
+		fvec3_zero(),
+		one
+	};
+
+	RigidBody rb = {
+		type,
+		transform,
+		collider,
+		bb,
+		NULL
+	};
+
+	bb = asciidng_generate_transform_bounding_box( &rb );
+	rb.bounding_box = bb;
+
+
+	RigidBody *rb_ptr = insert_data( &rigid_bodies, &rb, sizeof( RigidBody ) );
+	asciidng_register_octree_rigid_body( rb_ptr );
+	return rb_ptr;
+}
+
+void asciidng_remove_rigid_body( RigidBody *rigid_body )
+{
+
 }
 
 void asciidng_init_physics()
 {
+	rigid_bodies = gen_dynamic_array( sizeof( RigidBody ) );
 }
 
 void asciidng_loop_physics()
 {
+	free_dynamic_array( &rigid_bodies );
 }
 
 void asciidng_terminate_physics()
