@@ -3,6 +3,9 @@
 
 #include "mutils.h"
 
+struct RigidBody;
+typedef struct RigidBody RigidBody;
+
 struct Model;
 typedef struct Model Model;
 
@@ -34,18 +37,21 @@ typedef struct TileInstance {
 	TileDefinition *def;
 	Model *model;
 	ivec3 coords;
+	RigidBody *rigid_body;
 } TileInstance;
 
 typedef struct PropInstance {
 	PropDefinition *def;
 	Model *model;
-	fvec3 position;
+	fvec3 position, rotation;
+	RigidBody *rigid_body;
 } PropInstance;
 
 typedef struct EntityInstance {
 	EntityDefinition *def;
 	Model *model;
-	fvec3 position;
+	fvec3 position, rotation;
+	RigidBody *rigid_body;
 } EntityInstance;
 
 void asciidng_init_workspace();
@@ -56,14 +62,23 @@ void asciidng_clear_workspace();
 TileInstance *asciidng_gen_tile( const char *tile_name, int x, int y, int z );
 void asciidng_remove_tile( TileInstance *instance );
 void asciidng_clear_tiles();
+TileInstance *asciidng_set_tile_coords( TileInstance *tile, int x, int y, int z );
 
 PropInstance *asciidng_gen_prop( const char *prop_name, float x, float y, float z );
 void asciidng_remove_prop( PropInstance *instance );
 void asciidng_clear_props();
+PropInstance *asciidng_set_prop_position( PropInstance *prop, float x, float y, float z );
+PropInstance *asciidng_set_prop_rotation( PropInstance *prop, float x, float y, float z );
+PropInstance *asciidng_translate_prop( PropInstance *prop, float x, float y, float z );
+PropInstance *asciidng_rotate_prop( PropInstance *prop, float x, float y, float z );
 
 EntityInstance *asciidng_gen_entity( const char *entity_name, float x, float y, float z );
 void asciidng_remove_entity( EntityInstance *instance );
 void asciidng_clear_entities();
+EntityInstance *asciidng_set_entity_position( EntityInstance *prop, float x, float y, float z );
+EntityInstance *asciidng_set_entity_rotation( EntityInstance *prop, float x, float y, float z );
+EntityInstance *asciidng_translate_entity( EntityInstance *prop, float x, float y, float z );
+EntityInstance *asciidng_rotate_entity( EntityInstance *prop, float x, float y, float z );
 
 UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, unsigned int size_y, char *text, int layer );
 void asciidng_remove_ui_button( UIButtonInstance *instance );

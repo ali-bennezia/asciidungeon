@@ -73,13 +73,14 @@ static size_t get_rigid_bodies_count( Node *node )
 static ivec3 get_lower_level_coords( int x, int y, int z, size_t level, size_t backsteps )
 {
 	size_t target_level = level - backsteps;
-	size_t divider = pow( 2, backsteps );
+	float divider = pow( 2, backsteps );
 
 	ivec3 result = {
-		( x - x % divider ) / divider,
-		( y - y % divider ) / divider,
-		( z - z % divider ) / divider
+		floor( ( float ) x / divider ),
+		floor( ( float ) y / divider ),
+		floor( ( float ) z / divider ),
 	};
+
 	return result;
 }
 

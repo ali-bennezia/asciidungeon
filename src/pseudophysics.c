@@ -19,15 +19,15 @@ void asciidng_generate_parallelepiped_vertices( fvec3 size, fvec3 *vertices )
 	fvec3 half_size = fvec3_scalar_divide( size, 2 );
 	size_t index = 0;
 	for ( int x = 0; x < 2; ++x ){
-		if ( x <= 0 ) x = -1;
+		int x_coord = x <= 0 ? -1 : x;
 		for ( int y = 0; y < 2; ++y ){
-			if ( y <= 0 ) y = -1;
+			int y_coord = y <= 0 ? -1 : y;
 			for ( int z = 0; z < 2; ++z ){
-				if ( z <= 0 ) z = -1;
+				int z_coord = z <= 0 ? -1 : z;
 				fvec3 vert = {
-					half_size.x * x,
-					half_size.y * y,
-					half_size.z * z
+					half_size.x * x_coord,
+					half_size.y * y_coord,
+					half_size.z * z_coord
 				};
 				*( vertices + index ) = vert;
 				++index;
@@ -127,14 +127,14 @@ void asciidng_rotate_rigid_body( RigidBody *rigid_body, fvec3 rotation )
 
 RigidBody *asciidng_create_rigid_body( enum BODY_TYPE type, fvec3 position, fvec3 rotation )
 {
+	fvec3 one = { 1, 1, 1 };
+
 	Transform transform = {
 		position,
 		rotation,
 		fvec3_zero(),
 		fvec3_zero()
 	};
-
-	fvec3 one = { 1, 1, 1 };
 
 	BoundingBox bb;
 
@@ -156,7 +156,6 @@ RigidBody *asciidng_create_rigid_body( enum BODY_TYPE type, fvec3 position, fvec
 	bb = asciidng_generate_transform_bounding_box( &rb );
 	rb.bounding_box = bb;
 
-
 	RigidBody *rb_ptr = insert_data( &rigid_bodies, &rb, sizeof( RigidBody ) );
 	asciidng_register_octree_rigid_body( rb_ptr );
 	return rb_ptr;
@@ -164,19 +163,32 @@ RigidBody *asciidng_create_rigid_body( enum BODY_TYPE type, fvec3 position, fvec
 
 void asciidng_remove_rigid_body( RigidBody *rigid_body )
 {
-
+	RigidBody *found = NULL;
+	int found_i = -1;
+	for ( size_t i = 0; i < rigid_bodies.usage; ++i ){
+		if ( ( RigidBody* ) rigid_bodies.buffer + i == rigid_body ){
+			found = ( RigidBody* ) rigid_bodies.buffer + i;
+			found_i = (int) i;
+			break;
+		}
+	}
+	if ( found != NULL && found_i >= 0 ){
+		remove_data( &rigid_bodies, found_i, sizeof( RigidBody ) );
+	}
 }
 
 void asciidng_init_physics()
 {
+	asciidng_init_octree();
 	rigid_bodies = gen_dynamic_array( sizeof( RigidBody ) );
 }
 
 void asciidng_loop_physics()
 {
-	free_dynamic_array( &rigid_bodies );
 }
 
 void asciidng_terminate_physics()
 {
+	free_dynamic_array( &rigid_bodies );
+	asciidng_terminate_octree();
 }

@@ -5,6 +5,7 @@
 #include "ui.h"
 #include "utils.h"
 #include "registry.h"
+#include "pseudophysics.h"
 
 static DynamicArray tiles, props, entities;
 static DynamicArray buttons, images, frames, texts; 
@@ -76,10 +77,19 @@ TileInstance *asciidng_gen_tile( const char *tile_name, int x, int y, int z )
 
 	model->position = position;
 
+	fvec3 position_fvec3 = { position.x, position.y, position.z };
+
+	RigidBody *rigid_body = asciidng_create_rigid_body( 
+		STATIC_BODY, 
+		position_fvec3, 
+		fvec3_zero() 
+	);
+
 	TileInstance instance = {
 		def,
 		model,
-		coords
+		coords,
+		rigid_body
 	};
 
 	return insert_data( &tiles, &instance, sizeof( TileInstance ) );
@@ -95,6 +105,10 @@ void asciidng_remove_tile( TileInstance *instance )
 		model->texture = NULL;
 		free_model( model );
 	}
+	if ( instance->rigid_body != NULL ){
+		asciidng_remove_rigid_body( instance->rigid_body );
+		instance->rigid_body = NULL;
+	}
 
 	size_t i = instance - ( ( TileInstance* ) tiles.buffer );
 	remove_data( &tiles, i, sizeof( TileInstance ) );
@@ -105,6 +119,17 @@ void asciidng_clear_tiles()
 	clear_mode = 4;
 	foreach_dynarr( &tiles, sizeof( TileInstance ), dynarr_clear_fun );
 	clear_dynamic_array( &tiles, sizeof( TileInstance ) );	
+}
+
+TileInstance *asciidng_set_tile_coords( TileInstance *tile, int x, int y, int z )
+{
+	ivec3 coords = { x, y, z };
+	fvec3 position = { 2*x, 2*y, 2*z };
+
+	tile->coords = coords;
+	asciidng_set_rigid_body_transform_position( tile->rigid_body, position );
+	
+	return tile;
 }
 
 PropInstance *asciidng_gen_prop( const char *prop_name, float x, float y, float z )
@@ -119,13 +144,22 @@ PropInstance *asciidng_gen_prop( const char *prop_name, float x, float y, float 
 
 	fvec3 fpos = { x, y, z };
 	Vec3 position = { x, y, z };
+	fvec3 position_fvec3 = { x, y, z };
 
 	model->position = position;
+
+	RigidBody *rigid_body = asciidng_create_rigid_body( 
+		STATIC_BODY, 
+		position_fvec3, 
+		fvec3_zero() 
+	);
 
 	PropInstance instance = {
 		def,
 		model,
-		fpos
+		fpos,
+		fvec3_zero(),
+		rigid_body
 	};
 
 	return insert_data( &props, &instance, sizeof( PropInstance ) );
@@ -141,6 +175,10 @@ void asciidng_remove_prop( PropInstance *instance )
 		model->texture = NULL;
 		free_model( model );
 	}
+	if ( instance->rigid_body != NULL ){
+		asciidng_remove_rigid_body( instance->rigid_body );
+		instance->rigid_body = NULL;
+	}
 
 	size_t i = instance - ( ( PropInstance* ) props.buffer );
 	remove_data( &props, i, sizeof( PropInstance ) );
@@ -151,6 +189,40 @@ void asciidng_clear_props()
 	clear_mode = 5;
 	foreach_dynarr( &props, sizeof( PropInstance ), dynarr_clear_fun );
 	clear_dynamic_array( &props, sizeof( PropInstance ) );	
+}
+
+PropInstance *asciidng_set_prop_position( PropInstance *prop, float x, float y, float z )
+{
+	fvec3 position = { x, y, z };
+	prop->position = position;
+	asciidng_set_rigid_body_transform_position( prop->rigid_body, position );
+	return prop;
+}
+
+PropInstance *asciidng_set_prop_rotation( PropInstance *prop, float x, float y, float z )
+{
+	fvec3 rotation = { x, y, z };
+	prop->rotation = rotation;
+	asciidng_set_rigid_body_transform_rotation( prop->rigid_body, rotation );
+	return prop;
+}
+
+PropInstance *asciidng_translate_prop( PropInstance *prop, float x, float y, float z )
+{
+	fvec3 position = { x, y, z };
+	position = fvec3_add( prop->rigid_body->transform.position, position );
+	prop->position = position;
+	asciidng_set_rigid_body_transform_position( prop->rigid_body, position );
+	return prop;
+}
+
+PropInstance *asciidng_rotate_prop( PropInstance *prop, float x, float y, float z )
+{
+	fvec3 rotation = { x, y, z };
+	rotation = fvec3_add( prop->rigid_body->transform.rotation, rotation );
+	prop->rotation = rotation;
+	asciidng_set_rigid_body_transform_rotation( prop->rigid_body, rotation );
+	return prop;
 }
 
 EntityInstance *asciidng_gen_entity( const char *entity_name, float x, float y, float z )
@@ -165,13 +237,22 @@ EntityInstance *asciidng_gen_entity( const char *entity_name, float x, float y, 
 
 	fvec3 fpos = { x, y, z };
 	Vec3 position = { x, y, z };
+	fvec3 position_fvec3 = { x, y, z };
 
 	model->position = position;
+
+	RigidBody *rigid_body = asciidng_create_rigid_body( 
+		STATIC_BODY, 
+		position_fvec3, 
+		fvec3_zero() 
+	);
 
 	EntityInstance instance = {
 		def,
 		model,
-		fpos
+		fpos,
+		fvec3_zero(),
+		rigid_body
 	};
 
 	return insert_data( &entities, &instance, sizeof( EntityInstance ) );
@@ -187,6 +268,10 @@ void asciidng_remove_entity( EntityInstance *instance )
 		model->texture = NULL;
 		free_model( model );
 	}
+	if ( instance->rigid_body != NULL ){
+		asciidng_remove_rigid_body( instance->rigid_body );
+		instance->rigid_body = NULL;
+	}
 
 	size_t i = instance - ( ( EntityInstance* ) entities.buffer );
 	remove_data( &entities, i, sizeof( EntityInstance ) );
@@ -197,6 +282,40 @@ void asciidng_clear_entities()
 	clear_mode = 6;
 	foreach_dynarr( &entities, sizeof( EntityInstance ), dynarr_clear_fun );
 	clear_dynamic_array( &entities, sizeof( EntityInstance ) );	
+}
+
+EntityInstance *asciidng_set_entity_position( EntityInstance *entity, float x, float y, float z )
+{
+	fvec3 position = { x, y, z };
+	entity->position = position;
+	asciidng_set_rigid_body_transform_position( entity->rigid_body, position );
+	return entity;
+}
+
+EntityInstance *asciidng_set_entity_rotation( EntityInstance *entity, float x, float y, float z )
+{
+	fvec3 rotation = { x, y, z };
+	entity->rotation = rotation;
+	asciidng_set_rigid_body_transform_rotation( entity->rigid_body, rotation );
+	return entity;
+}
+
+EntityInstance *asciidng_translate_entity( EntityInstance *entity, float x, float y, float z )
+{
+	fvec3 position = { x, y, z };
+	position = fvec3_add( entity->rigid_body->transform.position, position );
+	entity->position = position;
+	asciidng_set_rigid_body_transform_position( entity->rigid_body, position );
+	return entity;
+}
+
+EntityInstance *asciidng_rotate_entity( EntityInstance *entity, float x, float y, float z )
+{
+	fvec3 rotation = { x, y, z };
+	rotation = fvec3_add( entity->rigid_body->transform.rotation, rotation );
+	entity->rotation = rotation;
+	asciidng_set_rigid_body_transform_rotation( entity->rigid_body, rotation );
+	return entity;
 }
 
 UIButtonInstance *asciidng_gen_ui_button( int x, int y, unsigned int size_x, unsigned int size_y, char *text, int layer )
