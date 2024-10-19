@@ -47,7 +47,7 @@ void asciidng_generate_parallelepiped_collider_vertices( Collider collider, fvec
 	}
 }
 
-BoundingBox asciidng_generate_transform_bounding_box( RigidBody *rigid_body )
+BoundingBox asciidng_generate_parallelepiped_rigid_body_bounding_box( RigidBody *rigid_body )
 {
 	Transform transform = rigid_body->transform;
 
@@ -87,6 +87,19 @@ BoundingBox asciidng_generate_transform_bounding_box( RigidBody *rigid_body )
 	};
 
 	return bb;
+}
+
+BoundingBox asciidng_generate_transform_bounding_box( RigidBody *rigid_body )
+{
+
+	switch ( rigid_body->collider.collider_type ){
+		case PARALLELEPIPED_COLLIDER:
+			return asciidng_generate_parallelepiped_rigid_body_bounding_box( rigid_body );
+		default:
+			BoundingBox empty = { 0 };
+			return empty;
+	}
+
 }
 
 void asciidng_update_rigid_body_bounding_box( RigidBody *rigid_body )
