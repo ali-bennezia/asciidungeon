@@ -101,6 +101,14 @@ fvec2 fvec2_zero();
 fvec3 fvec3_zero();
 fvec4 fvec4_zero();
 
+fvec2 fvec2_scalar( float s );
+fvec3 fvec3_scalar( float s );
+fvec4 fvec4_scalar( float s );
+
+ivec2 ivec2_scalar( int s );
+ivec3 ivec3_scalar( int s );
+ivec4 ivec4_scalar( int s );
+
 fvec2 fmat2_get_row( fmat2 mat, int i );
 fvec2 fmat2_get_column( fmat2 mat, int i );
 fvec3 fmat3_get_row( fmat3 mat, int i );

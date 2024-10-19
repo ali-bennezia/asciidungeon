@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <sys/time.h>
+
 #include <asciigl.h>
 
 #include "registry.h"
@@ -25,6 +27,13 @@
 
 
 boolval g_running = true;
+
+long long get_milliseconds_time()
+{
+	struct timeval tv;
+	gettimeofday( &tv, NULL );
+	return (((long long)tv.tv_sec)*1000)+(tv.tv_usec/1000);
+}
 
 static void terminate()
 {
@@ -133,9 +142,13 @@ static void init()
 
 static void loop()
 {
+	long long last = get_milliseconds_time();
+	double delta = 0;
 	while (g_running)
 	{
-		asciidng_loop_physics();
+		delta = ( ( double ) get_milliseconds_time() - last ) / 1000.0;
+
+		asciidng_loop_physics( delta );
 		asciidng_poll_input();
 		asciidng_loop_player();
 		asciigl_process_frame();

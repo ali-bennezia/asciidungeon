@@ -54,8 +54,6 @@ typedef struct RaycastResult {
 
 RaycastResult asciidng_cast_ray( Ray ray );
 
-void asciidng_generate_parallelepiped_vertices( fvec3 size, fvec3 *vertices );
-void asciidng_generate_parallelepiped_collider_vertices( Collider collider, fvec3 *vertices );
 BoundingBox asciidng_generate_bounding_box( RigidBody *rigid_body );
 void asciidng_update_rigid_body_bounding_box( RigidBody *rigid_body );
 
@@ -70,7 +68,7 @@ RigidBody *asciidng_create_rigid_body( enum BODY_TYPE type, fvec3 position, fvec
 void asciidng_remove_rigid_body( RigidBody *rigid_body );
 
 void asciidng_init_physics();
-void asciidng_loop_physics();
+void asciidng_loop_physics( double delta_time );
 void asciidng_terminate_physics();
 
 #endif

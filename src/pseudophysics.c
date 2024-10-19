@@ -6,6 +6,8 @@
 
 #include "rboctree.h"
 
+#include "geo.h"
+
 static DynamicArray rigid_bodies;
 
 RaycastResult asciidng_cast_ray( Ray ray )
@@ -14,31 +16,9 @@ RaycastResult asciidng_cast_ray( Ray ray )
 	return result;
 }
 
-void asciidng_generate_parallelepiped_vertices( fvec3 size, fvec3 *vertices )
+static void asciidng_generate_parallelepiped_collider_vertices( Collider collider, fvec3 *vertices )
 {
-	fvec3 half_size = fvec3_scalar_divide( size, 2 );
-	size_t index = 0;
-	for ( int x = 0; x < 2; ++x ){
-		int x_coord = x <= 0 ? -1 : x;
-		for ( int y = 0; y < 2; ++y ){
-			int y_coord = y <= 0 ? -1 : y;
-			for ( int z = 0; z < 2; ++z ){
-				int z_coord = z <= 0 ? -1 : z;
-				fvec3 vert = {
-					half_size.x * x_coord,
-					half_size.y * y_coord,
-					half_size.z * z_coord
-				};
-				*( vertices + index ) = vert;
-				++index;
-			}
-		}
-	}
-}
-
-void asciidng_generate_parallelepiped_collider_vertices( Collider collider, fvec3 *vertices )
-{
-	asciidng_generate_parallelepiped_vertices( collider.size, vertices );
+	asciidng_geo_parallelepiped( collider.size, vertices );
 	fmat3 rotation_matrix;
 	fmat3_rotation_matrix( collider.local_rotation.x, collider.local_rotation.y, collider.local_rotation.z, rotation_matrix );
 	for ( size_t i = 0; i < 8; ++i ){
@@ -47,7 +27,7 @@ void asciidng_generate_parallelepiped_collider_vertices( Collider collider, fvec
 	}
 }
 
-BoundingBox asciidng_generate_parallelepiped_rigid_body_bounding_box( RigidBody *rigid_body )
+static BoundingBox asciidng_generate_parallelepiped_rigid_body_bounding_box( RigidBody *rigid_body )
 {
 	Transform transform = rigid_body->transform;
 
@@ -89,7 +69,29 @@ BoundingBox asciidng_generate_parallelepiped_rigid_body_bounding_box( RigidBody 
 	return bb;
 }
 
-BoundingBox asciidng_generate_transform_bounding_box( RigidBody *rigid_body )
+static BoundingBox asciidng_generate_sphere_rigid_body_bounding_box( RigidBody *rigid_body )
+{
+	Transform transform = rigid_body->transform;
+
+	fvec3 bb_min, bb_max;
+	bb_min = fvec3_substract( 
+		rigid_body->collider.local_position,
+		fvec3_multiply( fvec3_scalar( rigid_body->collider.radius ), -1 )
+	);
+
+	bb_max = fvec3_substract( 
+		rigid_body->collider.local_position,
+		fvec3_scalar( rigid_body->collider.radius )
+	);
+
+	BoundingBox bb = {
+		bb_min, bb_max
+	};
+
+	return bb;
+}
+
+BoundingBox asciidng_generate_bounding_box( RigidBody *rigid_body )
 {
 
 	switch ( rigid_body->collider.collider_type ){
@@ -105,7 +107,7 @@ BoundingBox asciidng_generate_transform_bounding_box( RigidBody *rigid_body )
 void asciidng_update_rigid_body_bounding_box( RigidBody *rigid_body )
 {
 	BoundingBox old_bb = rigid_body->bounding_box;
-	BoundingBox bb = asciidng_generate_transform_bounding_box( rigid_body );
+	BoundingBox bb = asciidng_generate_bounding_box( rigid_body );
 	rigid_body->bounding_box = bb;
 	asciidng_update_octree_rigid_body( rigid_body, old_bb );
 }
@@ -166,7 +168,7 @@ RigidBody *asciidng_create_rigid_body( enum BODY_TYPE type, fvec3 position, fvec
 		NULL
 	};
 
-	bb = asciidng_generate_transform_bounding_box( &rb );
+	bb = asciidng_generate_bounding_box( &rb );
 	rb.bounding_box = bb;
 
 	RigidBody *rb_ptr = insert_data( &rigid_bodies, &rb, sizeof( RigidBody ) );
@@ -196,7 +198,7 @@ void asciidng_init_physics()
 	rigid_bodies = gen_dynamic_array( sizeof( RigidBody ) );
 }
 
-void asciidng_loop_physics()
+void asciidng_loop_physics( double delta_time )
 {
 }
 

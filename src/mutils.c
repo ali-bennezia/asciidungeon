@@ -410,6 +410,40 @@ fvec4 fvec4_zero()
 	return zero;
 }
 
+fvec2 fvec2_scalar( float s )
+{
+	fvec2 scalar = { s };
+	return scalar;
+}
+
+fvec3 fvec3_scalar( float s )
+{
+	fvec3 scalar = { s };
+	return scalar;
+}
+
+fvec4 fvec4_scalar( float s )
+{
+	fvec4 scalar = { s };
+	return scalar;
+}
+
+ivec2 ivec2_scalar( int s )
+{
+	ivec2 scalar = { s };
+	return scalar;	
+}
+
+ivec3 ivec3_scalar( int s )
+{
+	ivec3 scalar = { s };
+}
+
+ivec4 ivec4_scalar( int s )
+{
+	ivec4 scalar = { s };
+}
+
 fvec2 fmat2_get_row( fmat2 mat, int i )
 {
 	fvec2 result = {
