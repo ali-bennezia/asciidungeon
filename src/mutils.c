@@ -522,6 +522,24 @@ void fmat4_set( fmat4 mat, float val, int i, int j )
 	mat[ i * mat_size + j ] = val;
 }
 
+float fmat2_at( fmat2 mat, int i, int j )
+{
+	const size_t mat_size = 2;
+	return mat[ i * mat_size + j ];
+}
+
+float fmat3_at( fmat3 mat, int i, int j )
+{
+	const size_t mat_size = 3;
+	return mat[ i * mat_size + j ];
+}
+
+float fmat4_at( fmat4 mat, int i, int j )
+{
+	const size_t mat_size = 4;
+	return mat[ i * mat_size + j ];
+}
+
 void fmat2_fill( fmat2 mat, float val )
 {
 	const size_t mat_size = 2;
@@ -652,6 +670,97 @@ void fmat4_mult( fmat4 mat1, fmat4 mat2, fmat4 out )
 			fmat4_set( out, fvec4_dot( row_vec, col_vec ), i, j );	
 		} 	
 	} 
+}
+
+float fmat2_determinant( fmat2 mat )
+{
+	return 
+		fmat2_at( mat, 0, 0 ) * fmat2_at( mat, 1, 1 ) -
+		fmat2_at( mat, 0, 1 ) * fmat2_at( mat, 1, 0 );
+}
+
+float fmat3_determinant( fmat3 mat )
+{
+	float a = fmat3_at( mat, 0, 0 ),
+		b = -fmat3_at( mat, 0, 1 ),
+		c = fmat3_at( mat, 0, 2 );
+
+	float d1 = fmat3_at( mat, 1, 1 ) * fmat3_at( mat, 2, 2 ) -
+		fmat3_at( mat, 1, 2 ) * fmat3_at( mat, 2, 1 );
+	float d2 = fmat3_at( mat, 1, 0 ) * fmat3_at( mat, 2, 2 ) -
+		fmat3_at( mat, 1, 2 ) * fmat3_at( mat, 2, 0 );
+	float d3 = fmat3_at( mat, 1, 0 ) * fmat3_at( mat, 2, 1 ) -
+		fmat3_at( mat, 1, 1 ) * fmat3_at( mat, 2, 0 );
+
+	return a * d1 + b * d2 + c * d3;
+}
+
+float fmat4_determinant( fmat4 mat )
+{
+	float a = fmat3_at( mat, 0, 0 ),
+		b = -fmat3_at( mat, 0, 1 ),
+		c = fmat3_at( mat, 0, 2 ),
+		d = -fmat3_at( mat, 0, 3 );
+
+	fmat3 m1, m2, m3, m4;
+
+	fmat3_set( m1, fmat4_at( mat, 1, 1 ), 0, 0 );
+	fmat3_set( m1, fmat4_at( mat, 2, 1 ), 1, 0 );
+	fmat3_set( m1, fmat4_at( mat, 3, 1 ), 2, 0 );
+
+	fmat3_set( m1, fmat4_at( mat, 1, 2 ), 0, 1 );
+	fmat3_set( m1, fmat4_at( mat, 2, 2 ), 1, 1 );
+	fmat3_set( m1, fmat4_at( mat, 3, 2 ), 2, 1 );
+
+	fmat3_set( m1, fmat4_at( mat, 1, 3 ), 0, 2 );
+	fmat3_set( m1, fmat4_at( mat, 2, 3 ), 1, 2 );
+	fmat3_set( m1, fmat4_at( mat, 3, 3 ), 2, 2 );
+
+
+	fmat3_set( m2, fmat4_at( mat, 1, 0 ), 0, 0 );
+	fmat3_set( m2, fmat4_at( mat, 2, 0 ), 1, 0 );
+	fmat3_set( m2, fmat4_at( mat, 3, 0 ), 2, 0 );
+
+	fmat3_set( m2, fmat4_at( mat, 1, 2 ), 0, 1 );
+	fmat3_set( m2, fmat4_at( mat, 2, 2 ), 1, 1 );
+	fmat3_set( m2, fmat4_at( mat, 3, 2 ), 2, 1 );
+
+	fmat3_set( m2, fmat4_at( mat, 1, 3 ), 0, 2 );
+	fmat3_set( m2, fmat4_at( mat, 2, 3 ), 1, 2 );
+	fmat3_set( m2, fmat4_at( mat, 3, 3 ), 2, 2 );
+
+
+	fmat3_set( m3, fmat4_at( mat, 1, 0 ), 0, 0 );
+	fmat3_set( m3, fmat4_at( mat, 2, 0 ), 1, 0 );
+	fmat3_set( m3, fmat4_at( mat, 3, 0 ), 2, 0 );
+
+	fmat3_set( m3, fmat4_at( mat, 1, 1 ), 0, 1 );
+	fmat3_set( m3, fmat4_at( mat, 2, 1 ), 1, 1 );
+	fmat3_set( m3, fmat4_at( mat, 3, 1 ), 2, 1 );
+
+	fmat3_set( m3, fmat4_at( mat, 1, 3 ), 0, 2 );
+	fmat3_set( m3, fmat4_at( mat, 2, 3 ), 1, 2 );
+	fmat3_set( m3, fmat4_at( mat, 3, 3 ), 2, 2 );
+
+
+	fmat3_set( m4, fmat4_at( mat, 1, 0 ), 0, 0 );
+	fmat3_set( m4, fmat4_at( mat, 2, 0 ), 1, 0 );
+	fmat3_set( m4, fmat4_at( mat, 3, 0 ), 2, 0 );
+
+	fmat3_set( m4, fmat4_at( mat, 1, 1 ), 0, 1 );
+	fmat3_set( m4, fmat4_at( mat, 2, 1 ), 1, 1 );
+	fmat3_set( m4, fmat4_at( mat, 3, 1 ), 2, 1 );
+
+	fmat3_set( m4, fmat4_at( mat, 1, 2 ), 0, 2 );
+	fmat3_set( m4, fmat4_at( mat, 2, 2 ), 1, 2 );
+	fmat3_set( m4, fmat4_at( mat, 3, 2 ), 2, 2 );
+
+	float d1 = fmat3_determinant( m1 ),
+		d2 = fmat3_determinant( m2 ),
+		d3 = fmat3_determinant( m3 ),
+		d4 = fmat3_determinant( m4 );
+
+	return a * d1 + b * d2 + c * d3 + d * d4;
 }
 
 fvec2 fmat2_fvec2_mult( fmat2 mat1, fvec2 vec )

@@ -120,6 +120,10 @@ void fmat2_set( fmat2 mat, float val, int i, int j );
 void fmat3_set( fmat3 mat, float val, int i, int j );
 void fmat4_set( fmat4 mat, float val, int i, int j );
 
+float fmat2_at( fmat2 mat, int i, int j );
+float fmat3_at( fmat3 mat, int i, int j );
+float fmat4_at( fmat4 mat, int i, int j );
+
 void fmat2_fill( fmat2 mat, float val );
 void fmat3_fill( fmat3 mat, float val );
 void fmat4_fill( fmat4 mat, float val );
@@ -139,6 +143,10 @@ void fmat4_cpy( fmat4 dest, fmat4 source );
 void fmat2_mult( fmat2 mat1, fmat2 mat2, fmat2 out );
 void fmat3_mult( fmat3 mat1, fmat3 mat2, fmat3 out );
 void fmat4_mult( fmat4 mat1, fmat4 mat2, fmat4 out );
+
+float fmat2_determinant( fmat2 mat );
+float fmat3_determinant( fmat3 mat );
+float fmat4_determinant( fmat4 mat );
 
 fvec2 fmat2_fvec2_mult( fmat2 mat1, fvec2 vec2 );
 fvec3 fmat3_fvec3_mult( fmat3 mat1, fvec3 vec2 );
