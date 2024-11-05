@@ -697,10 +697,10 @@ float fmat3_determinant( fmat3 mat )
 
 float fmat4_determinant( fmat4 mat )
 {
-	float a = fmat3_at( mat, 0, 0 ),
-		b = -fmat3_at( mat, 0, 1 ),
-		c = fmat3_at( mat, 0, 2 ),
-		d = -fmat3_at( mat, 0, 3 );
+	float a = fmat4_at( mat, 0, 0 ),
+		b = -fmat4_at( mat, 0, 1 ),
+		c = fmat4_at( mat, 0, 2 ),
+		d = -fmat4_at( mat, 0, 3 );
 
 	fmat3 m1, m2, m3, m4;
 
@@ -923,4 +923,15 @@ void fmat3_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angl
 	fmat3_mult( a, step0, step1 );
 	fmat3_mult( b, step1, step2 );
 	fmat3_mult( c, step2, out );
+}
+
+void fmat4_translation_matrix( fvec3 translation, fmat4 out )
+{
+	fmat4 d = {
+		1, 0, 0, translation.x,
+		0, 1, 0, translation.y,
+		0, 0, 1, translation.z,
+		0, 0, 0, 1
+	};
+	fmat3_cpy( out, d );
 }

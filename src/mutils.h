@@ -159,4 +159,6 @@ void fmat3_z_rotation_matrix( float theta, fmat3 out );
 void fmat2_rotation_matrix( float theta, fmat2 out );
 void fmat3_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angle_rads, fmat3 out );
 
+void fmat4_translation_matrix( fvec3 translation, fmat4 out );
+
 #endif

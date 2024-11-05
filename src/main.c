@@ -88,6 +88,15 @@ void leave_callbck( MouseEvent e, void *ui_instance, enum ASCIIDNG_UI_INSTANCE_T
 
 static void init()
 {
+	fmat4 d = {
+		0, 4, 5, 8,
+		6, 9, 22, -1,
+		-2, 6, 9, 5,
+		0, 9, 5, 2
+	};
+	printf( "determinant: %f\n", fmat4_determinant( d ) );
+	system( "PAUSE" );
+
 	asciigl_init();
 	asciidng_init_registry();
 	asciidng_init_workspace();
