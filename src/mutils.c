@@ -2,6 +2,8 @@
 
 #include <stddef.h>
 #include <string.h>
+
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 int ivec2_equals( ivec2 vec1, ivec2 vec2 )
@@ -624,6 +626,78 @@ void fmat3_cpy( fmat3 dest, fmat3 source )
 	memcpy( dest, source, sizeof( float ) * mat_size * mat_size );
 }
 
+void fmat2_cpy_part( fmat2 dest, fmat2 source, int i_dest, int j_dest )
+{
+	const size_t mat_size = 2;
+
+	for ( size_t i = 0; i < mat_size; ++i )
+	{
+		for ( size_t j = 0; j < mat_size; ++j )
+		{
+			fmat2_set( 
+				dest, 
+				fmat2_at( source, i, j ), 
+				(i + i_dest) % mat_size, 
+				(j + j_dest) % mat_size
+			);
+		} 	
+	} 
+}
+
+void fmat3_cpy_part( fmat3 dest, fmat3 source, int i_dest, int j_dest )
+{
+	const size_t mat_size = 3;
+
+	for ( size_t i = 0; i < mat_size; ++i )
+	{
+		for ( size_t j = 0; j < mat_size; ++j )
+		{
+			fmat3_set( 
+				dest, 
+				fmat3_at( source, i, j ), 
+				(i + i_dest) % mat_size, 
+				(j + j_dest) % mat_size
+			);
+		} 	
+	} 
+}
+
+void fmat4_cpy_part( fmat4 dest, fmat4 source, int i_dest, int j_dest )
+{
+	const size_t mat_size = 4;
+
+	for ( size_t i = 0; i < mat_size; ++i )
+	{
+		for ( size_t j = 0; j < mat_size; ++j )
+		{
+			fmat4_set( 
+				dest, 
+				fmat4_at( source, i, j ), 
+				(i + i_dest) % mat_size, 
+				(j + j_dest) % mat_size
+			);
+		} 	
+	} 
+}
+
+void fmat4_fmat3_cpy_part( fmat4 dest, fmat3 source, int i_dest, int j_dest )
+{
+	const size_t mat_size = 3;
+
+	for ( size_t i = 0; i < mat_size; ++i )
+	{
+		for ( size_t j = 0; j < mat_size; ++j )
+		{
+			fmat4_set( 
+				dest, 
+				fmat3_at( source, i, j ), 
+				(i + i_dest) % mat_size, 
+				(j + j_dest) % mat_size
+			);
+		} 	
+	} 
+}
+
 void fmat4_cpy( fmat4 dest, fmat4 source )
 {
 	const size_t mat_size = 4;
@@ -925,6 +999,18 @@ void fmat3_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angl
 	fmat3_mult( c, step2, out );
 }
 
+void fmat4_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angle_rads, fmat4 out )
+{
+	fmat4 m;
+	fmat4_identity( m );
+
+	fmat3 rot;
+	fmat3_rotation_matrix( x_angle_rads, y_angle_rads, z_angle_rads, rot );
+
+	fmat4_fmat3_cpy_part( m, rot, 0, 0 );
+	fmat4_cpy( out, m );
+}
+
 void fmat4_translation_matrix( fvec3 translation, fmat4 out )
 {
 	fmat4 d = {
@@ -933,5 +1019,6 @@ void fmat4_translation_matrix( fvec3 translation, fmat4 out )
 		0, 0, 1, translation.z,
 		0, 0, 0, 1
 	};
-	fmat3_cpy( out, d );
+	fmat4_cpy( out, d );
 }
+

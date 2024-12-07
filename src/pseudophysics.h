@@ -39,6 +39,7 @@ typedef struct RigidBody {
 	Collider collider;
 	BoundingBox bounding_box;
 	Node *node_cache;
+	float bounciness;
 } RigidBody;
 
 typedef struct Ray {
@@ -66,6 +67,8 @@ void asciidng_rotate_rigid_body( RigidBody *rigid_body, fvec3 rotation );
 
 RigidBody *asciidng_create_rigid_body( enum BODY_TYPE type, fvec3 position, fvec3 rotation );
 void asciidng_remove_rigid_body( RigidBody *rigid_body );
+
+void asciidng_generate_rigid_body_model_matrix( RigidBody *rigid_body, fmat4 out );
 
 void asciidng_init_physics();
 void asciidng_loop_physics( double delta_time );

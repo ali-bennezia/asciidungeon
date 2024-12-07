@@ -140,6 +140,11 @@ void fmat2_cpy( fmat2 dest, fmat2 source );
 void fmat3_cpy( fmat3 dest, fmat3 source );
 void fmat4_cpy( fmat4 dest, fmat4 source );
 
+void fmat2_cpy_part( fmat2 dest, fmat2 source, int i_dest, int j_dest );
+void fmat3_cpy_part( fmat3 dest, fmat3 source, int i_dest, int j_dest );
+void fmat4_cpy_part( fmat4 dest, fmat4 source, int i_dest, int j_dest );
+void fmat4_fmat3_cpy_part( fmat4 dest, fmat3 source, int i_dest, int j_dest );
+
 void fmat2_mult( fmat2 mat1, fmat2 mat2, fmat2 out );
 void fmat3_mult( fmat3 mat1, fmat3 mat2, fmat3 out );
 void fmat4_mult( fmat4 mat1, fmat4 mat2, fmat4 out );
@@ -158,6 +163,7 @@ void fmat3_z_rotation_matrix( float theta, fmat3 out );
 
 void fmat2_rotation_matrix( float theta, fmat2 out );
 void fmat3_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angle_rads, fmat3 out );
+void fmat4_rotation_matrix( float x_angle_rads, float y_angle_rads, float z_angle_rads, fmat3 out );
 
 void fmat4_translation_matrix( fvec3 translation, fmat4 out );
 

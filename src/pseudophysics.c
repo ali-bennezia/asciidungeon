@@ -165,7 +165,8 @@ RigidBody *asciidng_create_rigid_body( enum BODY_TYPE type, fvec3 position, fvec
 		transform,
 		collider,
 		bb,
-		NULL
+		NULL,
+		0.5f
 	};
 
 	bb = asciidng_generate_bounding_box( &rb );
@@ -192,6 +193,31 @@ void asciidng_remove_rigid_body( RigidBody *rigid_body )
 	}
 }
 
+void asciidng_generate_rigid_body_model_matrix( RigidBody *rigid_body, fmat4 out )
+{
+	fmat4 local_rot, local_pos, rot, pos;
+	fmat4 local_model_matrix, world_model_matrix;
+	fmat4_rotation_matrix( 
+		to_rads( rigid_body->collider.local_rotation.x ),
+		to_rads( rigid_body->collider.local_rotation.y ),
+		to_rads( rigid_body->collider.local_rotation.z ),
+		local_rot
+		);
+	fmat4_translation_matrix( rigid_body->collider.local_position, local_pos );
+	fmat4_mult(local_pos, local_rot, local_model_matrix);
+	fmat4_rotation_matrix(
+		to_rads( rigid_body->transform.rotation.x ),
+		to_rads( rigid_body->transform.rotation.y ),
+		to_rads( rigid_body->transform.rotation.z ),
+		rot
+	);
+	fmat4_translation_matrix( rigid_body->transform.position, pos );
+	fmat4_mult(pos, rot, world_model_matrix);
+	fmat4 result;
+	fmat4_mult( world_model_matrix, local_model_matrix, result );
+	fmat4_cpy( out, result );
+}
+
 void asciidng_init_physics()
 {
 	asciidng_init_octree();
@@ -200,6 +226,9 @@ void asciidng_init_physics()
 
 void asciidng_loop_physics( double delta_time )
 {
+	for ( size_t i = 0; i < rigid_bodies.usage; ++i ){
+		RigidBody *rb = ( RigidBody* ) rigid_bodies.buffer + i;
+	}
 }
 
 void asciidng_terminate_physics()
